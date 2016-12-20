@@ -1,0 +1,8 @@
+; spacegame.asm
+Forever                          = $C03F
+palette                          = $E000
+vBlankWait                       = $C000
+clrmem                           = $C01D
+RESET                            = $C006
+sprites                          = $E020
+NMI                              = $C042

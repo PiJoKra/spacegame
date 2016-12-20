@@ -25,12 +25,6 @@ score .rs 1
 	.bank 0
 	.org $C000	
 	
-vBlankWait:
-	BIT $2002
-	BPL vBlankWait ;If not ready, repeat
-	RTS
-	
-	
 RESET:
 	SEI          ; disable IRQs
 	CLD          ; disable decimal mode
@@ -63,6 +57,13 @@ clrmem:
 	
 StopResetAndClearMemory ;Prevent code from reset and clearing of memory to leak through
 	JMP StopResetAndClearMemory
+	
+vBlankWait:
+	BIT $2002
+	BPL vBlankWait ;If not ready, repeat
+	RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 NMI:
 	LDA #$00

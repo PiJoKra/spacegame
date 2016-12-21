@@ -96,11 +96,6 @@ NMI:
 	STA $2003       ; set the low byte (00) of the RAM address
 	LDA #$02
 	STA $4014       ; set the high byte (02) of the RAM address, start the transfer
-
-	LDA #%10010000   ; enable NMI, sprites from Pattern Table 0, background from Pattern Table 1
-	STA $2000
-	LDA #%00011110   ; enable sprites, enable background, no clipping on left side
-	STA $2001
 	LDA #$00        ;;tell the ppu there is no background scrolling
 	STA $2005
 	STA $2005

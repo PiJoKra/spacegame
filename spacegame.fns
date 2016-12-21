@@ -1,6 +1,10 @@
 ; spacegame/spacegame.asm
-StopResetAndClearMemory          = $C03F
-vBlankWait                       = $C000
-clrmem                           = $C01D
-RESET                            = $C006
-NMI                              = $C042
+LoadPalettes                     = $C039
+StopResetAndClearMemory          = $C062
+LoadPalettesLoop                 = $C048
+vBlankWait                       = $C065
+Sprites                          = $E004
+clrmem                           = $C017
+RESET                            = $C000
+Palette                          = $E000
+NMI                              = $C06B

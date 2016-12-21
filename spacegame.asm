@@ -48,14 +48,40 @@ clrmem:
 	STA $0500, x
 	STA $0600, x
 	STA $0700, x
+	
 	LDA #$FE
 	STA $0200, x
+	
 	INX
 	BNE clrmem
 	
 	JSR vBlankWait
 	
-StopResetAndClearMemory ;Prevent code from reset and clearing of memory to leak through
+LoadPalettes:
+	LDA $2002 ;Reset high/low latch
+	
+	;Write #$3F00
+	LDA #$3F
+	STA $2006
+	LDA #$00
+	STA $2006
+	
+	LDX #$0
+	
+LoadPalettesLoop:
+	LDA Palette, x
+	STA $2007
+	INX
+	CPX #$4
+	BNE LoadPalettesLoop
+	
+	LDA #%10000000 ;Enable NMI
+	STA $2000
+	
+	LDA #%00010000 ;Enable sprites
+	STA $2001
+	
+StopResetAndClearMemory: ;Prevent code from reset and clearing of memory to leak through
 	JMP StopResetAndClearMemory
 	
 vBlankWait:
@@ -79,20 +105,24 @@ NMI:
 	STA $2005
 	STA $2005
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;
 	.bank 1
     .org $E000
-;  palette:
-;    .db $22,$29,$1A,$0F,  $22,$36,$17,$0F,  $22,$30,$21,$0F,  $22,$27,$17,$0F   ;;background palette
-;    .db $22,$1C,$15,$14,  $22,$02,$38,$3C,  $22,$1C,$15,$14,  $22,$02,$38,$3C   ;;sprite palette
+
+Palette:
+	.db $22,$0F,$16,$30 ;Blue, Black, Red, White
+Sprites:
+	;Spaceship
+	.db $80, $00, $00, $80
+	.db $80, $01, $00, $88
+	.db $88, $10, $00, $80
+	.db $88, $11, $00, $88
   
-;  sprites:
-;       ;vert tile attr horiz
-;    .db $80, $32, $00, $80   ;sprite 0
-;    .db $80, $33, $00, $88   ;sprite 1
-;    .db $88, $34, $00, $80   ;sprite 2
-;    .db $88, $35, $00, $88   ;sprite 3
+  
+  
+  
+  
   
   
   

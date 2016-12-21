@@ -21,6 +21,14 @@ PLAYER_MAX_X = $F7
 PLAYER_MAX_Y = $F7
 
 buttons .rs 1
+BUTTON_A		= %10000000
+BUTTON_B		= %01000000
+BUTTON_SELECT	= %00100000
+BUTTON_START	= %00010000
+BUTTON_UP		= %00001000
+BUTTON_DOWN		= %00000100
+BUTTON_LEFT		= %00000010
+BUTTON_RIGHT	= %00000001
 
 score .rs 1
 
@@ -129,55 +137,55 @@ ReadInput:
 
 HandleButtonUp:
 	LDA buttons
-	AND #%00001000
-	BEQ HandleButtonUpDone
+	AND #BUTTON_UP
+	BEQ .rts
 	
 	LDA PLAYER_Y_MEM
 	SEC
 	SBC playerSpeed
 	STA PLAYER_Y_MEM
 	
-	HandleButtonUpDone:
-	RTS
+	.rts:
+		RTS
 
 HandleButtonRight:
 	LDA buttons
-	AND #%00000001
-	BEQ HandleButtonRightDone
+	AND #BUTTON_RIGHT
+	BEQ .rts
 	
 	LDA PLAYER_X_MEM
 	CLC
 	ADC playerSpeed
 	STA PLAYER_X_MEM
 	
-	HandleButtonRightDone:
-	RTS
+	.rts:
+		RTS
 
-HandleButtonBottom:
+HandleButtonDown:
 	LDA buttons
-	AND #%00000100
-	BEQ HandleButtonBottomDone
+	AND #BUTTON_DOWN
+	BEQ .rts
 	
 	LDA PLAYER_Y_MEM
 	CLC
 	ADC playerSpeed
 	STA PLAYER_Y_MEM
 	
-	HandleButtonBottomDone:
-	RTS
+	.rts:
+		RTS
 
 HandleButtonLeft:
 	LDA buttons
-	AND #%00000010
-	BEQ HandleButtonLeftDone
+	AND #BUTTON_LEFT
+	BEQ .rts
 	
 	LDA PLAYER_X_MEM
 	SEC
 	SBC playerSpeed
 	STA PLAYER_X_MEM
 	
-	HandleButtonLeftDone:
-	RTS
+	.rts:
+		RTS
 	
 AllignSpaceShipSprites:
 	
@@ -196,7 +204,7 @@ NMI:
 	
 	JSR HandleButtonUp
 	JSR HandleButtonRight
-	JSR HandleButtonBottom
+	JSR HandleButtonDown
 	JSR HandleButtonLeft
 	
 	JSR AllignSpaceShipSprites

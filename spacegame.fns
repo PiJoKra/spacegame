@@ -1,21 +1,17 @@
 ; spacegame/spacegame.asm
 ReadInput                        = $C078
-HandleButtonRightDone            = $C0B2
 LoadPalettes                     = $C039
-HandleButtonLeftDone             = $C0D6
 StopResetAndClearMemory          = $C06F
 HandleButtonRight                = $C0A1
 ReadControllerLoop               = $C084
-HandleButtonBottomDone           = $C0C4
 LoadPalettesLoop                 = $C048
 vBlankWait                       = $C072
-HandleButtonBottom               = $C0B3
 AllignSpaceShipSprites           = $C0D7
 LoadSpaceShipSpriteLoop          = $C055
+HandleButtonDown                 = $C0B3
 HandleButtonUp                   = $C08F
 clrmem                           = $C017
 RESET                            = $C000
-HandleButtonUpDone               = $C0A0
 SpaceShipSprite                  = $E020
 EnableNMIAndSprites              = $C060
 Palette                          = $E000

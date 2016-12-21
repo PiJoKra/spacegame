@@ -62,7 +62,7 @@ clrmem:
 LoadPalettes:
 	LDA $2002 ;Reset high/low latch
 	
-	;Write #$3F00
+	;Write #$3F00 as first (background) palette address
 	LDA #$3F
 	STA $2006
 	LDA #$00
@@ -78,28 +78,30 @@ LoadPalettes:
 		INX
 		CPX #$20
 		BNE LoadPalettesLoop
-	
-LoadSprites:
+
+LoadSpaceShipSprite:
 	LDX #$0
 	
-	LoadSpritesLoop:
-		LDA Sprites, x
+	;$0200-$02FF is sprite data where every 4 bytes is a sprite
+	;First sprite will be the spaceship
+	LoadSpaceShipSpriteLoop:
+		LDA SpaceShipSprite, x
 		STA $0200, x
 		INX
 		CPX #$10
 		BNE LoadSpritesLoop
-	
-	
-EnableNMIAndSprites:	
+
+
+EnableNMIAndSprites:
 	LDA #%10000000 ;Enable NMI
 	STA $2000
-	
+
 	LDA #%00010000 ;Enable sprites
 	STA $2001
-	
+
 StopResetAndClearMemory: ;Prevent code from reset and clearing of memory to leak through
 	JMP StopResetAndClearMemory
-	
+
 vBlankWait:
 	BIT $2002
 	BPL vBlankWait ;If not ready, repeat
@@ -123,42 +125,38 @@ NMI:
 
 Palette:
 	;Background colors
-	.db $0F,$0F,$0F,$0F 
-	.db $0F,$0F,$0F,$0F
-	.db $0F,$0F,$0F,$0F
-	.db $0F,$0F,$0F,$0F
-	
+	.db $0F, $0F, $0F, $0F 
+	.db $0F, $0F, $0F, $0F
+	.db $0F, $0F, $0F, $0F
+	.db $0F, $0F, $0F, $0F
+
 	;Sprite colors
-	.db $22,$0F,$16,$30 ;Blue, Black, Red, White
-	.db $0F,$0F,$0F,$0F
-	.db $0F,$0F,$0F,$0F
-	.db $0F,$0F,$0F,$0F 
-	
-Sprites:
-	;Spaceship
+	.db $22, $0F, $16, $30 ;Blue, Black, Red, White
+	.db $0F, $0F, $0F, $0F
+	.db $0F, $0F, $0F, $0F
+	.db $0F, $0F, $0F, $0F 
+
+SpaceShipSprite:
 	.db $08, $00, $00, $08
 	.db $08, $01, $00, $10
 	.db $10, $10, $00, $08
 	.db $10, $11, $00, $10
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
     .org $FFFA     ;first of the three vectors starts here
     .dw NMI        ;when an NMI happens (once per frame if enabled) the 
                      ;processor will jump to the label NMI:
     .dw RESET      ;when the processor first turns on or is reset, it will jump
                      ;to the label RESET:
     .dw 0          ;external interrupt IRQ is not used in this tutorial
-    
-    
-  ;;;;;;;;;;;;;;  
-    
-    
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
     .bank 2
     .org $0000
     .incbin "spacegame/spacegame.chr"

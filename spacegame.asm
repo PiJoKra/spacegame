@@ -13,6 +13,8 @@ GAME_STATE_DEAD = $02
 playerSpeed .rs 1
 playerX .rs 1
 playerY .rs 1
+PLAYER_X_MEM = $0204
+PLAYER_Y_MEM = $0200
 PLAYER_MIN_X = $0
 PLAYER_MIN_Y = $0
 PLAYER_MAX_X = $F7
@@ -68,13 +70,27 @@ LoadPalettes:
 	
 	LDX #$0
 	
-LoadPalettesLoop:
-	LDA Palette, x
-	STA $2007
-	INX
-	CPX #$4
-	BNE LoadPalettesLoop
+	;$3F00-$3F0F are for background colors
+	;$3F10-$3F1F are for sprite colors
+	LoadPalettesLoop:
+		LDA Palette, x
+		STA $2007
+		INX
+		CPX #$20
+		BNE LoadPalettesLoop
 	
+LoadSprites:
+	LDX #$0
+	
+	LoadSpritesLoop:
+		LDA Sprites, x
+		STA $0200, x
+		INX
+		CPX #$10
+		BNE LoadSpritesLoop
+	
+	
+EnableNMIAndSprites:	
 	LDA #%10000000 ;Enable NMI
 	STA $2000
 	
@@ -106,13 +122,24 @@ NMI:
     .org $E000
 
 Palette:
+	;Background colors
+	.db $0F,$0F,$0F,$0F 
+	.db $0F,$0F,$0F,$0F
+	.db $0F,$0F,$0F,$0F
+	.db $0F,$0F,$0F,$0F
+	
+	;Sprite colors
 	.db $22,$0F,$16,$30 ;Blue, Black, Red, White
+	.db $0F,$0F,$0F,$0F
+	.db $0F,$0F,$0F,$0F
+	.db $0F,$0F,$0F,$0F 
+	
 Sprites:
 	;Spaceship
-	.db $80, $00, $00, $80
-	.db $80, $01, $00, $88
-	.db $88, $10, $00, $80
-	.db $88, $11, $00, $88
+	.db $08, $00, $00, $08
+	.db $08, $01, $00, $10
+	.db $10, $10, $00, $08
+	.db $10, $11, $00, $10
   
   
   

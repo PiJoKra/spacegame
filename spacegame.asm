@@ -13,7 +13,7 @@ GAME_STATE_DEAD = $02
 playerSpeed .rs 1
 playerX .rs 1
 playerY .rs 1
-PLAYER_X_MEM = $0204
+PLAYER_X_MEM = $0203
 PLAYER_Y_MEM = $0200
 PLAYER_MIN_X = $0
 PLAYER_MIN_Y = $0
@@ -34,7 +34,7 @@ RESET:
 	STX $4017    ; disable APU frame IRQ
 	LDX #$FF
 	TXS          ; Set up stack
-	INX          ; now X = 0
+	INX          ; now X = $FF + 1 => 0
 	STX $2000    ; disable NMI
 	STX $2001    ; disable rendering
 	STX $4010    ; disable DMC IRQs
@@ -50,15 +50,15 @@ clrmem:
 	STA $0500, x
 	STA $0600, x
 	STA $0700, x
-	
+
 	LDA #$FE
 	STA $0200, x
-	
+
 	INX
 	BNE clrmem
-	
+
 	JSR vBlankWait
-	
+
 LoadPalettes:
 	LDA $2002 ;Reset high/low latch
 	
@@ -67,11 +67,10 @@ LoadPalettes:
 	STA $2006
 	LDA #$00
 	STA $2006
-	
-	LDX #$0
-	
+
 	;$3F00-$3F0F are for background colors
 	;$3F10-$3F1F are for sprite colors
+	LDX #$00
 	LoadPalettesLoop:
 		LDA Palette, x
 		STA $2007
@@ -80,16 +79,15 @@ LoadPalettes:
 		BNE LoadPalettesLoop
 
 LoadSpaceShipSprite:
-	LDX #$0
-	
 	;$0200-$02FF is sprite data where every 4 bytes is a sprite
 	;First sprite will be the spaceship
+	LDX #$00
 	LoadSpaceShipSpriteLoop:
 		LDA SpaceShipSprite, x
 		STA $0200, x
 		INX
 		CPX #$10
-		BNE LoadSpritesLoop
+		BNE LoadSpaceShipSpriteLoop
 
 
 EnableNMIAndSprites:
@@ -98,6 +96,10 @@ EnableNMIAndSprites:
 
 	LDA #%00010000 ;Enable sprites
 	STA $2001
+	
+InitializeGame:
+	LDA #$02
+	STA playerSpeed
 
 StopResetAndClearMemory: ;Prevent code from reset and clearing of memory to leak through
 	JMP StopResetAndClearMemory
@@ -109,6 +111,78 @@ vBlankWait:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+ReadInput:
+	LDA #$01
+	STA $4016
+	LDA #$00
+	STA $4016
+
+	LDX #$08
+	ReadControllerLoop:
+		LDA $4016
+		LSR A
+		ROL buttons
+		DEX
+		BNE ReadControllerLoop
+
+	RTS
+
+HandleButtonUp:
+	LDA buttons
+	AND #%00001000
+	BEQ HandleButtonUpDone
+	
+	LDA PLAYER_Y_MEM
+	SEC
+	SBC playerSpeed
+	STA PLAYER_Y_MEM
+	
+	HandleButtonUpDone:
+	RTS
+
+HandleButtonRight:
+	LDA buttons
+	AND #%00000001
+	BEQ HandleButtonRightDone
+	
+	LDA PLAYER_X_MEM
+	CLC
+	ADC playerSpeed
+	STA PLAYER_X_MEM
+	
+	HandleButtonRightDone:
+	RTS
+
+HandleButtonBottom:
+	LDA buttons
+	AND #%00000100
+	BEQ HandleButtonBottomDone
+	
+	LDA PLAYER_Y_MEM
+	CLC
+	ADC playerSpeed
+	STA PLAYER_Y_MEM
+	
+	HandleButtonBottomDone:
+	RTS
+
+HandleButtonLeft:
+	LDA buttons
+	AND #%00000010
+	BEQ HandleButtonLeftDone
+	
+	LDA PLAYER_X_MEM
+	SEC
+	SBC playerSpeed
+	STA PLAYER_X_MEM
+	
+	HandleButtonLeftDone:
+	RTS
+	
+AllignSpaceShipSprites:
+	
+	RTS
+
 NMI:
 	LDA #$00
 	STA $2003       ; set the low byte (00) of the RAM address
@@ -117,6 +191,15 @@ NMI:
 	LDA #$00        ;;tell the ppu there is no background scrolling
 	STA $2005
 	STA $2005
+	
+	JSR ReadInput
+	
+	JSR HandleButtonUp
+	JSR HandleButtonRight
+	JSR HandleButtonBottom
+	JSR HandleButtonLeft
+	
+	JSR AllignSpaceShipSprites
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -131,16 +214,18 @@ Palette:
 	.db $0F, $0F, $0F, $0F
 
 	;Sprite colors
-	.db $22, $0F, $16, $30 ;Blue, Black, Red, White
-	.db $0F, $0F, $0F, $0F
-	.db $0F, $0F, $0F, $0F
-	.db $0F, $0F, $0F, $0F 
+	;First color is always used for transparancy and 
+	;needs to be the same color (last one I am not 100% sure of tho...)
+	.db $00, $0F, $16, $30 ;Black, Red, White
+	.db $00, $11, $21, $30 ;Blue, Light blue, White
+	.db $00, $0F, $0F, $0F
+	.db $00, $0F, $0F, $0F 
 
 SpaceShipSprite:
-	.db $08, $00, $00, $08
-	.db $08, $01, $00, $10
-	.db $10, $10, $00, $08
-	.db $10, $11, $00, $10
+	.db $08, $00, $01, $08
+	.db $08, $01, $01, $10
+	.db $10, $10, $01, $08
+	.db $10, $11, $01, $10
 
 
 

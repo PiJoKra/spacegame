@@ -13,8 +13,6 @@ GAME_STATE_DEAD = $02
 playerSpeed .rs 1
 playerX .rs 1
 playerY .rs 1
-PLAYER_X_MEM = $0203
-PLAYER_Y_MEM = $0200
 PLAYER_MIN_X = $0
 PLAYER_MIN_Y = $0
 PLAYER_MAX_X = $F7
@@ -106,6 +104,9 @@ EnableNMIAndSprites:
 	STA $2001
 	
 InitializeGame:
+	LDA #$00
+	STA playerX
+	STA playerY
 	LDA #$02
 	STA playerSpeed
 
@@ -140,10 +141,10 @@ HandleButtonUp:
 	AND #BUTTON_UP
 	BEQ .rts
 	
-	LDA PLAYER_Y_MEM
+	LDA playerY
 	SEC
 	SBC playerSpeed
-	STA PLAYER_Y_MEM
+	STA playerY
 	
 	.rts:
 		RTS
@@ -153,10 +154,10 @@ HandleButtonRight:
 	AND #BUTTON_RIGHT
 	BEQ .rts
 	
-	LDA PLAYER_X_MEM
+	LDA playerX
 	CLC
 	ADC playerSpeed
-	STA PLAYER_X_MEM
+	STA playerX
 	
 	.rts:
 		RTS
@@ -166,10 +167,10 @@ HandleButtonDown:
 	AND #BUTTON_DOWN
 	BEQ .rts
 	
-	LDA PLAYER_Y_MEM
+	LDA playerY
 	CLC
 	ADC playerSpeed
-	STA PLAYER_Y_MEM
+	STA playerY
 	
 	.rts:
 		RTS
@@ -179,16 +180,34 @@ HandleButtonLeft:
 	AND #BUTTON_LEFT
 	BEQ .rts
 	
-	LDA PLAYER_X_MEM
+	LDA playerX
 	SEC
 	SBC playerSpeed
-	STA PLAYER_X_MEM
+	STA playerX
 	
 	.rts:
 		RTS
 	
 AllignSpaceShipSprites:
+
+	;200 x x 203 | 204 x x 207 | 208 x x 20B | 20C x x 20F
+	;First number is y, forth is x
+
+	LDA playerY
+	STA $200
+	STA $204
+	CLC
+	ADC #$8
+	STA $208
+	STA $20C
 	
+	LDA playerX
+	STA $203
+	STA $20B
+	CLC
+	ADC #$8
+	STA $207
+	STA $20F
 	RTS
 
 NMI:

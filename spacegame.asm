@@ -13,10 +13,10 @@ GAME_STATE_DEAD = $02
 playerSpeed .rs 1
 playerX .rs 1
 playerY .rs 1
-PLAYER_MIN_X = $0
-PLAYER_MIN_Y = $0
-PLAYER_MAX_X = $F7
-PLAYER_MAX_Y = $F7
+PLAYER_MIN_X = $0A
+PLAYER_MIN_Y = $0A
+PLAYER_MAX_X = $A0
+PLAYER_MAX_Y = $A0
 
 buttons .rs 1
 BUTTON_A		= %10000000
@@ -104,7 +104,7 @@ EnableNMIAndSprites:
 	STA $2001
 	
 InitializeGame:
-	LDA #$00
+	LDA #$80
 	STA playerX
 	STA playerY
 	LDA #$02
@@ -187,6 +187,42 @@ HandleButtonLeft:
 	
 	.rts:
 		RTS
+
+RestrictSpaceShipPositionY:
+	LDA playerY
+	CMP #PLAYER_MIN_Y
+	BCC .restrictYLowerBound
+	CMP #PLAYER_MAX_Y
+	BCS .restrictYHigherBound
+	RTS
+	
+	.restrictYLowerBound:
+		LDA #PLAYER_MIN_Y
+		STA playerY
+		RTS
+	
+	.restrictYHigherBound:
+		LDA #PLAYER_MAX_Y
+		STA playerY
+		RTS
+	
+RestrictSpaceShipPositionX:
+	LDA playerX
+	CMP #PLAYER_MIN_X
+	BCC .restrictXLowerBound
+	CMP #PLAYER_MAX_X
+	BCS .restrictXHigherBound
+	RTS
+	
+	.restrictXLowerBound:
+		LDA #PLAYER_MIN_X
+		STA playerX
+		RTS
+	
+	.restrictXHigherBound:
+		LDA #PLAYER_MAX_X
+		STA playerX
+		RTS
 	
 AllignSpaceShipSprites:
 
@@ -225,6 +261,9 @@ NMI:
 	JSR HandleButtonRight
 	JSR HandleButtonDown
 	JSR HandleButtonLeft
+	
+	JSR RestrictSpaceShipPositionY
+	JSR RestrictSpaceShipPositionX
 	
 	JSR AllignSpaceShipSprites
 

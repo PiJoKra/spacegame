@@ -5,20 +5,20 @@
 
 	.rsset $0000
 
-gamestate .rs 1
+gamestate .rs 1	;$0000
 GAME_STATE_MENU = $00
 GAME_STATE_PLAYING = $01
 GAME_STATE_DEAD = $02
 
-playerSpeed .rs 1
-playerX .rs 1
-playerY .rs 1
+playerSpeed .rs 1 ;$0001
+playerX .rs 1 ;$0002
+playerY .rs 1 ;$0003
 PLAYER_MIN_X = $0A
 PLAYER_MIN_Y = $0A
 PLAYER_MAX_X = $A0
 PLAYER_MAX_Y = $A0
 
-buttons .rs 1
+buttons .rs 1 ;$0004
 BUTTON_A		= %10000000
 BUTTON_B		= %01000000
 BUTTON_SELECT	= %00100000
@@ -28,7 +28,10 @@ BUTTON_DOWN		= %00000100
 BUTTON_LEFT		= %00000010
 BUTTON_RIGHT	= %00000001
 
-score .rs 1
+canShoot .rs 1 ;$0005
+CAN_SHOOT_COUNTER = $70
+
+score .rs 1 ;$0006
 
 	.bank 0
 	.org $C000	
@@ -109,6 +112,9 @@ InitializeGame:
 	STA playerY
 	LDA #$02
 	STA playerSpeed
+	
+	LDA #CAN_SHOOT_COUNTER
+	STA canShoot
 
 StopResetAndClearMemory: ;Prevent code from reset and clearing of memory to leak through
 	JMP StopResetAndClearMemory
@@ -187,6 +193,26 @@ HandleButtonLeft:
 	
 	.rts:
 		RTS
+		
+HandleButtonShoot:
+
+	LDA canShoot
+	BEQ .shoot
+	SEC
+	SBC #$1
+	STA canShoot
+	RTS
+	
+	.shoot:
+		LDA buttons
+		AND #BUTTON_A
+		BEQ .rts
+		
+		LDA #CAN_SHOOT_COUNTER
+		STA canShoot
+		
+	.rts:
+		RTS
 
 RestrictSpaceShipPositionY:
 	LDA playerY
@@ -226,6 +252,7 @@ RestrictSpaceShipPositionX:
 	
 AllignSpaceShipSprites:
 
+	;Sprites of the spaceship: 
 	;200 x x 203 | 204 x x 207 | 208 x x 20B | 20C x x 20F
 	;First number is y, forth is x
 
@@ -244,6 +271,15 @@ AllignSpaceShipSprites:
 	ADC #$8
 	STA $207
 	STA $20F
+	RTS
+	
+UpdateScore:
+	LDA score
+	CLC
+	ADC #$1
+	STA score
+	RTS
+ShowScore:
 	RTS
 
 NMI:
@@ -266,6 +302,11 @@ NMI:
 	JSR RestrictSpaceShipPositionX
 	
 	JSR AllignSpaceShipSprites
+	
+	JSR HandleButtonShoot
+	
+	JSR UpdateScore
+	JSR ShowScore
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

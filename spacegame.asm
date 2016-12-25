@@ -98,6 +98,7 @@ LoadPalettes:
 		CPX #$20
 		BNE LoadPalettesLoop
 
+
 LoadSpaceShipSprite:
 	;$0200-$02FF is sprite data where every 4 bytes is a sprite
 	;First sprite will be the spaceship
@@ -286,11 +287,7 @@ AllignSpaceShipSprites:
 	
 UpdateScore:
 	LDX #$3 ;Start with the lowest digit of the score
-
-	LDA score, x ;Load the lowest digit of the score
-	CLC
-	ADC #$1 ;Add 1 to the score
-	STA score, x
+	INC score, x ;Increase the lowest digit of the score
 	
 	;Since every digit of the score is saved seperately, we have to check that
 		;not a single digit is over 9, but instead overflows to the next digit
@@ -314,6 +311,61 @@ UpdateScore:
 	.rts:
 		RTS
 ShowScore:
+	
+	LoadHUDBorderTop:
+		LDA $2002
+		LDA #$20
+		STA $2006
+		LDA #$00
+		STA $2006
+		
+		;Draw top border HUD
+		LDX #$00
+		.loop:
+			LDA HUD, x
+			STA $2007
+			
+			INX
+			CPX #$41
+			BNE .loop
+			
+		;Draw score
+		LDX #$00
+		.loop2:
+			LDA score, x
+			STA $2007
+			
+			INX
+			CPX #$4
+			BNE .loop2
+			
+			
+	LoadAttributes:
+		LDA $2002
+		LDA #$23
+		STA $2006
+		LDA #$C0
+		STA $2006
+		
+		LDX #$00
+		.loop:
+			LDA Attributes, x
+			STA $2007
+			
+			INX
+			CPX #$8
+			BNE .loop
+		
+		LDA #%10010000
+		STA $2000
+		
+		LDA #%00011110
+		STA $2001
+		
+		LDA #$00
+		STA $2005
+		STA $2005
+	
 	RTS
 
 NMI:
@@ -349,10 +401,10 @@ NMI:
 
 Palette:
 	;Background colors
-	.db $0F, $0F, $0F, $0F 
-	.db $0F, $0F, $0F, $0F
-	.db $0F, $0F, $0F, $0F
-	.db $0F, $0F, $0F, $0F
+	.db $11, $11, $11, $11 
+	.db $11, $11, $11, $11
+	.db $11, $11, $11, $11
+	.db $11, $11, $11, $11
 
 	;Sprite colors
 	;First color is always used for transparancy and 
@@ -367,6 +419,22 @@ SpaceShipSprite:
 	.db $08, $01, $01, $10
 	.db $10, $10, $01, $08
 	.db $10, $11, $01, $10
+	
+HUD:
+	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+		.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+		
+	.db $00, $10, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11
+		.db $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $12, $00
+		
+	;.db $2D, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $2E
+	.db $00, $15, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $17
+	
+Attributes:
+	.db %00010000, %00010000, %01000000, %10000000, %00001000, %00000000, %00000000, %00000000
+	
+RainbowPath:
+	.db $02
 
 
 
@@ -386,6 +454,3 @@ SpaceShipSprite:
     .bank 2
     .org $0000
     .incbin "spacegame/spacegame.chr"
-
-
-

@@ -290,7 +290,7 @@ UpdateScore:
 	LDA score, x ;Load the lowest digit of the score
 	CLC
 	ADC #$1 ;Add 1 to the score
-	
+	STA score, x
 	;Since every digit of the score is saved seperately, we have to check that
 		;not a single digit is over 9, but instead overflows to the next digit
 	

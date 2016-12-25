@@ -291,6 +291,7 @@ UpdateScore:
 	CLC
 	ADC #$1 ;Add 1 to the score
 	STA score, x
+	
 	;Since every digit of the score is saved seperately, we have to check that
 		;not a single digit is over 9, but instead overflows to the next digit
 	
@@ -303,12 +304,12 @@ UpdateScore:
 		CMP #$0A ;If this digit is lower than $A, so $0-$9, we do not have to look any further 
 		BCC .rts
 		
-		SBC #$0A
-		STA score, x
-		DEX
-		INC score, x
+		SBC #$0A ;If the digit is $A, set it back at $0
+		STA score, x ;Store the new digit
+		DEX ;Decrease X, so the next digit will be updated
+		INC score, x ;Increase that next digit, since the previous one overflowed
 		
-		JMP HandleScoreDigits
+		JMP HandleScoreDigits ;Repeat until no more digits
 		
 	.rts:
 		RTS

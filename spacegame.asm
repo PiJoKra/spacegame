@@ -3,22 +3,14 @@
 	.inesmap 0   ; mapper 0 = NROM, no bank swapping
 	.inesmir 1   ; background mirroring
 
-	.rsset $0000
+	.rsset $0000 ;Game related stuff
 
 gamestate .rs 1	;$0000
 GAME_STATE_MENU = $00
 GAME_STATE_PLAYING = $01
 GAME_STATE_DEAD = $02
 
-playerSpeed .rs 1 ;$0001
-playerX .rs 1 ;$0002
-playerY .rs 1 ;$0003
-PLAYER_MIN_X = $0A
-PLAYER_MIN_Y = $0A
-PLAYER_MAX_X = $A0
-PLAYER_MAX_Y = $A0
-
-buttons .rs 1 ;$0004
+buttons .rs 1 ;$0001
 BUTTON_A		= %10000000
 BUTTON_B		= %01000000
 BUTTON_SELECT	= %00100000
@@ -28,10 +20,29 @@ BUTTON_DOWN		= %00000100
 BUTTON_LEFT		= %00000010
 BUTTON_RIGHT	= %00000001
 
-canShoot .rs 1 ;$0005
+score .rs 4
+
+	.rsset $0010 ;Player related stuff
+
+playerSpeed .rs 1 ;$0010
+playerX .rs 1 ;$0011
+playerY .rs 1 ;$0012
+PLAYER_MIN_X = $0A
+PLAYER_MIN_Y = $0A
+PLAYER_MAX_X = $A0
+PLAYER_MAX_Y = $A0
+
+canShoot .rs 1 ;$0013
 CAN_SHOOT_COUNTER = $70
 
-score .rs 1 ;$0006
+	;Bullets are stored as $xx $yy | $xx $yy | ... from $0020 until $0040
+	;This means that 16 bullets can be stored at the same time
+	;Instead of destroying bullets when they get out of the screen,
+		;they get overwritten once the game runs out of space for new bullets
+	;This means there can be a bullet overflow, but that should be solved by
+		;the canShoot counter
+
+
 
 	.bank 0
 	.org $C000	
@@ -274,11 +285,33 @@ AllignSpaceShipSprites:
 	RTS
 	
 UpdateScore:
-	LDA score
+	LDX #$3 ;Start with the lowest digit of the score
+
+	LDA score, x ;Load the lowest digit of the score
 	CLC
-	ADC #$1
-	STA score
-	RTS
+	ADC #$1 ;Add 1 to the score
+	
+	;Since every digit of the score is saved seperately, we have to check that
+		;not a single digit is over 9, but instead overflows to the next digit
+	
+	SEC ;Set clear bit since we will only subtract here anyway
+	HandleScoreDigits:
+		CPX #$FF ;If we handled the highest digit of the score (score + 0), X will now be $FF ($0 - $1)
+		BEQ .rts
+		
+		LDA score, x
+		CMP #$0A ;If this digit is lower than $A, so $0-$9, we do not have to look any further 
+		BCC .rts
+		
+		SBC #$0A
+		STA score, x
+		DEX
+		INC score, x
+		
+		JMP HandleScoreDigits
+		
+	.rts:
+		RTS
 ShowScore:
 	RTS
 

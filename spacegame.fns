@@ -1,7 +1,7 @@
 ; spacegame/spacegame.asm
 UpdateScore                      = $C152
 RestrictSpaceShipPositionX       = $C115
-Attributes                       = $E080
+Attributes                       = $E084
 ReadInput                        = $C085
 RestrictSpaceShipPositionY       = $C0FD
 LoadAttributes                   = $C197
@@ -20,7 +20,7 @@ HandleButtonDown                 = $C0C0
 HandleButtonUp                   = $C09C
 clrmem                           = $C017
 RESET                            = $C000
-RainbowPath                      = $E088
+RainbowPath                      = $E08C
 SpaceShipSprite                  = $E020
 HandleButtonShoot                = $C0E4
 EnableNMIAndSprites              = $C060

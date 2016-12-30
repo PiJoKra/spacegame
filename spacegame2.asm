@@ -15,12 +15,18 @@
 	; and on address $8000 or $C000 (you can choose)
 	.bank 0
 	.org $8000
-	
+
+;Picture Processing Unit ports
+PPU_CONTROLLER = $2000
+PPU_MASK = $2001	
 PPU_STATUS_REGISTER = $2002
 
+;Central Processing Unit ports
 CPU_JOYSTICK_1 = $4016
 CPU_JOYSTICK_2 = $4017
 
+;Audio Processing Unit ports
+APU_DELTA_MODULATION_CHANNEL = $4010
 APU_FRAMECOUNTER_CONTROL = $4017
 	
 reset:
@@ -30,7 +36,7 @@ reset:
 	
 	;7th bit of framecounter control is the interupt inhibit flag
 	;Setting it to 1 puts it into a 5-step sequence
-	;TODO:...
+	;TODO:... more information
 	lda %01000000
 	sta APU_FRAMECOUNTER_CONTROL
 	
@@ -39,9 +45,9 @@ reset:
 	txs
 	
 	lda #$00
-	sta $2000
-	sta $2001
-	sta $4010
+	sta PPU_CONTROLLER
+	sta PPU_MASK
+	sta APU_DELTA_MODULATION_CHANNEL
 	
 	jsr waitVBlank
 	
@@ -61,11 +67,10 @@ clearMemory:
 	inx
 	bne clearMemory
 	
-	;.waitVBlank:
-	;	bit PPU_STATUS_REGISTER
-	;	bpl .waitVBlank
-	
 	;TODO: fields $01FD-01FF are set in waitVBlank...
+	;That does not happen if the vblank code is put here...
+	;But if you put both the previous waitVBlank and this one in its own container, than the same fields are written to
+	;Assembly6502... Y SO CONFUSING??...
 	jsr waitVBlank
 	
 enableNMI:
@@ -75,7 +80,6 @@ enableNMI:
 enableSprites:
 	lda #%00010000
 	sta $2001
-	
 endReset:
 	jmp endReset
 	
@@ -87,7 +91,7 @@ waitVBlank:
 ;==================================================;
 
 NMI:
-	
+	inc $00
 	
 	;End execution of NMI
 	rti

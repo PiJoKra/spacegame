@@ -1,0 +1,8 @@
+; spacegame/spacegame2.asm
+reset                            = $8000
+enableSprites                    = $8041
+endReset                         = $8046
+enableNMI                        = $803C
+clearMemory                      = $801E
+NMI                              = $804F
+waitVBlank                       = $8049

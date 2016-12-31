@@ -10,7 +10,6 @@ loadBackgroundGame:
 	loopLoadBackgroundGame:
 		lda backgroundGame, x
 		sta PPU_DATA
-		sta $00, x
 		inx
 		cpx #$80
 		bne loopLoadBackgroundGame

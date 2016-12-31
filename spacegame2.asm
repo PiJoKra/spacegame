@@ -4,6 +4,7 @@
 	.inesmir 1
 	
 	.rsset $0000
+score .rs 4
 	
 	.bank 1
 	
@@ -22,6 +23,7 @@
 	; and on address $8000 or $C000 (you can choose)
 	.bank 0
 	.org $8000
+	.include "spacegame/updateScore.asm"
 
 ;Picture Processing Unit ports
 PPU_CONTROLLER = $2000
@@ -131,6 +133,8 @@ waitVBlank:
 ;==================================================;
 
 NMI:
+	
+	jsr updateScore
 	
 	;Set PPU_SCROLL to 0000 as it gets reset every time PPU_ADDRESS_REGISTER gets read
 	lda #$00

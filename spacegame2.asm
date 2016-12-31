@@ -4,7 +4,19 @@
 	.inesmir 1
 	
 	.rsset $0000
+	
+gamestate .rs 1
 score .rs 4
+buttons .rs 1
+
+playerSpeed .rs 1
+playerX .rs 1
+playerY .rs 1
+canShoot .rs 1
+PLAYER_MIN_X = $0A
+PLAYER_MIN_Y = $0A
+PLAYER_MAX_X = $F5
+player_MAX_Y = $EB
 	
 	.bank 1
 	
@@ -25,6 +37,7 @@ score .rs 4
 	.org $8000
 	.include "spacegame/strings.asm"
 	.include "spacegame/updateScore.asm"
+	.include "spacegame/handleButtons.asm"
 
 ;Picture Processing Unit ports
 PPU_CONTROLLER = $2000
@@ -124,6 +137,14 @@ enableSprites:
 	lda #%00011110
 	sta PPU_MASK
 	
+initialisePlayer:
+	lda #$4
+	sta playerSpeed
+
+	lda #$80
+	sta playerX
+	sta playerY
+	
 endReset:
 	jmp endReset
 	
@@ -135,6 +156,8 @@ waitVBlank:
 ;==================================================;
 
 NMI:
+	
+	jsr readInput
 	
 	jsr updateScore
 	jsr updateScoreHUD

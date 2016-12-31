@@ -1,8 +1,18 @@
 ; spacegame/spacegame2.asm
+loadPalette                      = $8046
+clearSpriteData                  = $803D
 reset                            = $8000
-enableSprites                    = $8041
-endReset                         = $8046
-enableNMI                        = $803C
-clearMemory                      = $801E
-NMI                              = $804F
-waitVBlank                       = $8049
+palette                          = $E000
+enableSprites                    = $8068
+endReset                         = $806D
+enableNMI                        = $8063
+loopLoadPalette                  = $8055
+attributes                       = $E0D8
+clearMemory                      = $8022
+background                       = $8060
+loopLoadAttributes               = $E04C
+loadBackgroundGame               = $E020
+loopLoadBackgroundGame           = $E02F
+NMI                              = $8076
+backgroundGame                   = $E058
+waitVBlank                       = $8070

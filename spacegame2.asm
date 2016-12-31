@@ -6,10 +6,17 @@
 	.rsset $0000
 	
 	.bank 1
+	
+	.org $E000
+	.include "spacegame/palette.asm"
+	.include "spacegame/backgroundGame.asm"
+	
 	.org $FFFA
 	.dw	NMI
 	.dw reset
 	.dw 0
+	
+;==================================================;
 	
 	;NES games MUST have their main code in bank 0,
 	; and on address $8000 or $C000 (you can choose)
@@ -20,6 +27,9 @@
 PPU_CONTROLLER = $2000
 PPU_MASK = $2001	
 PPU_STATUS_REGISTER = $2002
+PPU_SCROLL = $2005
+PPU_ADDRESS_REGISTER = $2006
+PPU_DATA = $2007
 
 ;Central Processing Unit ports
 CPU_JOYSTICK_1 = $4016
@@ -47,17 +57,17 @@ reset:
 	lda #$00
 	sta PPU_CONTROLLER
 	sta PPU_MASK
+	sta PPU_SCROLL
+	sta PPU_SCROLL
 	sta APU_DELTA_MODULATION_CHANNEL
 	
 	jsr waitVBlank
 	
 	ldx #$00
 	lda #$00
-	ldy #$00
 clearMemory:
 	sta $0000, x
 	sta $0100, x
-	sta $0200, x
 	sta $0300, x
 	sta $0400, x
 	sta $0500, x
@@ -67,19 +77,49 @@ clearMemory:
 	inx
 	bne clearMemory
 	
+	inx ;Overflow x back from FF to 0
+	lda #$FF
+clearSpriteData:
+	sta $0200, x
+	
+	inx
+	bne clearSpriteData
+	
 	;TODO: fields $01FD-01FF are set in waitVBlank...
 	;That does not happen if the vblank code is put here...
-	;But if you put both the previous waitVBlank and this one in its own container, than the same fields are written to
+	;But if you put both the previous waitVBlank and this one in its own container, than the same fields are written to...
 	;Assembly6502... Y SO CONFUSING??...
 	jsr waitVBlank
 	
+loadPalette:
+	lda PPU_STATUS_REGISTER
+	
+	lda #$3F
+	sta PPU_ADDRESS_REGISTER
+	lda #$00
+	sta PPU_ADDRESS_REGISTER
+	
+	ldx #$00
+	loopLoadPalette:
+		lda palette, x
+		sta PPU_DATA
+		
+		inx
+		cpx #$20
+		bne loopLoadPalette
+	
+		
+background:
+	jsr loadBackgroundGame	
+	
 enableNMI:
-	lda #%10000000
+	lda #%10010000
 	sta $2000
 	
 enableSprites:
-	lda #%00010000
+	lda #%00011110
 	sta $2001
+	
 endReset:
 	jmp endReset
 	
@@ -93,9 +133,15 @@ waitVBlank:
 NMI:
 	inc $00
 	
+	
+	;Set PPU_SCROLL to 0000 as it gets reset every time PPU_ADDRESS_REGISTER gets read
+	lda #$00
+	sta PPU_SCROLL
+	sta PPU_SCROLL
+	
 	;End execution of NMI
 	rti
-	
+
 ;=================================================;
 	
 	.bank 2

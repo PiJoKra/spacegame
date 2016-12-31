@@ -127,6 +127,85 @@ InitializeGame:
 	
 	LDA #CAN_SHOOT_COUNTER
 	STA canShoot
+	
+;	JMP StopResetAndClearMemory
+	
+CreateBackground:
+	
+	LDA $2002
+	LDA #$20
+	STA $2006
+	LDA #$00
+	STA $2006
+	LDX #$00
+	.LoadingHUD:
+		LDA HUD, x
+		STA $2007
+		
+		INX
+		CPX #$80
+		BNE .LoadingHUD
+	;LDA #$01
+	STA $20
+	;JMP LoadAttributes
+	LDA #$20
+	STA $2006
+	TXA
+	STA $2006
+	;STA $AA
+	;LDX #$00
+	LDX #$00
+	.GeneratingBackground:
+		LDY #$00
+		.GenerateRow:
+			;TYA
+			LDA #$25
+			;STA $20, y
+			;LDA #$18
+			;TXA
+			STA $2007
+			;TXA
+			;STA $20
+			;TYA
+			;STA $21
+			;LDA $20
+			;ADC $21
+			;STA $20, x
+			
+			;LDA #$1
+			;STA ($22)
+			
+			INY
+			CPY #$1B
+			BNE .GenerateRow
+		INX
+		CPX #$20
+		BNE .GeneratingBackground 
+
+LoadAttributes:
+	LDA $2002
+	LDA #$23
+	STA $2006
+	LDA #$C0
+	STA $2006
+	
+	LDX #$00
+	.loop:
+		LDA Attributes, x
+		STA $2007
+		
+		INX
+		CPX #$8
+		BNE .loop
+	
+	;LDA #%10010000
+	;STA $2000
+	
+	;LDA #%00011110
+	;STA $2001
+
+RTS
+	
 
 StopResetAndClearMemory: ;Prevent code from reset and clearing of memory to leak through
 	JMP StopResetAndClearMemory
@@ -310,74 +389,56 @@ UpdateScore:
 		
 	.rts:
 		RTS
-ShowScore:
+;ShowScore:
 	; +----------------------------+ (28 x -) 
-	; | score: xxxx highscore: xxxx|
-	; +----------------------------+ (28 x -)
-	;
-	LoadHUDBorderTop:
-		LDA $2002
-		LDA #$20
-		STA $2006
-		LDA #$00
-		STA $2006
+	 ;| score: xxxx highscore: xxxx|
+	 ;+----------------------------+ (28 x -)
+	
+;	LoadHUDBorderTop:
+;		LDA $2002
+;		LDA #$20
+;		STA $2006
+;		LDA #$00
+;		STA $2006
 		
 		;Draw top border HUD and first part of score
 		; +-----...-------+
 		; + score: 
-		LDX #$00
-		.loop:
-			LDA HUD, x
-			STA $2007
+;		LDX #$00
+;		.loop:
+;			LDA HUD, x
+;			STA $2007
+;			
+;			INX
+;			CPX #$43
+;			BNE .loop
+;			
+;		;Draw score number
+;		LDX #$00
+;		.loop2:
+;			LDA score, x
+;			STA $2007
+;			
+;			INX
+;			CPX #$4
+;			BNE .loop2
 			
-			INX
-			CPX #$43
-			BNE .loop
-			
-		;Draw score number
-		LDX #$00
-		.loop2:
-			LDA score, x
-			STA $2007
-			
-			INX
-			CPX #$4
-			BNE .loop2
-			
-			
-	LoadAttributes:
-		LDA $2002
-		LDA #$23
-		STA $2006
-		LDA #$C0
-		STA $2006
-		
-		LDX #$00
-		.loop:
-			LDA Attributes, x
-			STA $2007
-			
-			INX
-			CPX #$8
-			BNE .loop
-		
-		LDA #%10010000
-		STA $2000
-		
-		LDA #%00011110
-		STA $2001
-		
-		LDA #$00
-		STA $2005
-		STA $2005
-	
-	RTS
 
 NMI:
+	;JMP .test
 	LDA #$00
 	STA $2003       ; set the low byte (00) of the RAM address
 	LDA #$02
 	STA $4014       ; set the high byte (02) of the RAM address, start the transfer
+	
+	JSR AllignSpaceShipSprites
+	
+	LDA #%10010000   ; enable NMI, sprites from Pattern Table 0, background from Pattern Table 1
+	STA $2000
+	LDA #%00011110   ; enable sprites, enable background, no clipping on left side
+	STA $2001
+	
+	
 	LDA #$00        ;;tell the ppu there is no background scrolling
 	STA $2005
 	STA $2005
@@ -392,12 +453,22 @@ NMI:
 	JSR RestrictSpaceShipPositionY
 	JSR RestrictSpaceShipPositionX
 	
-	JSR AllignSpaceShipSprites
+	;JSR AllignSpaceShipSprites
 	
 	JSR HandleButtonShoot
 	
 	JSR UpdateScore
-	JSR ShowScore
+	;JSR ShowScore
+	
+	;LDA #%10010000   ; enable NMI, sprites from Pattern Table 0, background from Pattern Table 1
+	;STA $2000
+	;LDA #%00011110   ; enable sprites, enable background, no clipping on left side
+	;STA $2001
+	
+	;LDA #$00
+	;STA $2005
+	;STA $2005
+	.test:
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -426,22 +497,23 @@ SpaceShipSprite:
 	.db $10, $11, $01, $10
 	
 HUD:
-	.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-		.db $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-		
+	.db $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18
+		.db $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18
+
+	; +---...---+
 	.db $18, $10, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11
 		.db $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $12, $18
-		
-	.db $18, $13, $18, $13
-	
-	;.db $2D, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $2E
-	.db $18, $15, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $17
+
+	; | score: xxxx
+	.db $18, $13, $18, $32, $22, $2E, $31, $24, $18, $00, $00, $00, $00, $18, $18, $18
+		.db $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $14, $18
+
+	.db $18, $15, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16
+		.db $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $16, $17, $18
 	
 Attributes:
 	.db %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000, %00000000
-	
-RainbowPath:
-	.db $02
+
 
 
 

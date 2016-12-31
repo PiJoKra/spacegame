@@ -135,6 +135,7 @@ waitVBlank:
 NMI:
 	
 	jsr updateScore
+	jsr updateScoreHUD
 	
 	;Set PPU_SCROLL to 0000 as it gets reset every time PPU_ADDRESS_REGISTER gets read
 	lda #$00

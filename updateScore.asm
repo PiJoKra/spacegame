@@ -20,3 +20,22 @@ updateScore:
 		
 	.rts:
 		RTS
+		
+updateScoreHUD:
+	lda PPU_STATUS_REGISTER
+	
+	lda #$20
+	sta PPU_ADDRESS_REGISTER
+	lda #$49
+	sta PPU_ADDRESS_REGISTER
+	
+	ldx #$00
+	loopUpdateScoreHUD:
+		lda score, x
+		sta PPU_DATA
+		
+		inx
+		cpx #$4
+		bne loopUpdateScoreHUD
+		
+	rts

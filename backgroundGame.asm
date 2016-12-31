@@ -7,12 +7,20 @@ loadBackgroundGame:
 	sta PPU_ADDRESS_REGISTER
 
 	ldx #$00
-	loopLoadBackgroundGame:
+	loopLoadBackgroundHUD:
 		lda backgroundGame, x
 		sta PPU_DATA
 		inx
 		cpx #$80
-		bne loopLoadBackgroundGame
+		bne loopLoadBackgroundHUD
+		
+	lda #$18
+	loopLoadBackgroundRest:
+		sta PPU_DATA
+		
+		inx
+		cpx #$0
+		bne loopLoadBackgroundRest
 		
 	lda PPU_STATUS_REGISTER
 	
@@ -35,7 +43,8 @@ loadBackgroundGame:
 backgroundGame:
 
 	; Border top
-	.db $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $10, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $12, $18
+	.db $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18
+	.db $18, $10, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $11, $12, $18
 
 	; | score: xxxx
 	.db $18, $13, $18, $32, $22, $2E, $31, $24, $18, $00, $00, $00, $00, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $18, $14, $18

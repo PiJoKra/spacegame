@@ -23,23 +23,25 @@ score .rs 4
 	; and on address $8000 or $C000 (you can choose)
 	.bank 0
 	.org $8000
+	.include "spacegame/strings.asm"
 	.include "spacegame/updateScore.asm"
 
 ;Picture Processing Unit ports
 PPU_CONTROLLER = $2000
 PPU_MASK = $2001	
 PPU_STATUS_REGISTER = $2002
+	;after setting PPU_ADDRESS_REGISTER you need to set PPU_SCROLL again as they have a shared internal register. That is why it is best to change PPU_SCROLL at the end. (http://wiki.nesdev.com/w/index.php/PPU_scrolling#Frequent_pitfalls)
 PPU_SCROLL = $2005
 PPU_ADDRESS_REGISTER = $2006
 PPU_DATA = $2007
 
 ;Central Processing Unit ports
 CPU_JOYSTICK_1 = $4016
-CPU_JOYSTICK_2 = $4017
+CPU_JOYSTICK_2 = $4017 ;Shares address with APU FC
 
 ;Audio Processing Unit ports
 APU_DELTA_MODULATION_CHANNEL = $4010
-APU_FRAMECOUNTER_CONTROL = $4017
+APU_FRAMECOUNTER_CONTROL = $4017 ;Shares address with CPU J2
 	
 reset:
 	
@@ -80,7 +82,7 @@ clearMemory:
 	bne clearMemory
 	
 	inx ;Overflow x back from FF to 0
-	lda #$FF
+	lda #$FF ;Sprites are hidden if they have a y-value of $EF or $FF
 clearSpriteData:
 	sta $0200, x
 	
@@ -116,11 +118,11 @@ background:
 	
 enableNMI:
 	lda #%10010000
-	sta $2000
+	sta PPU_CONTROLLER
 	
 enableSprites:
 	lda #%00011110
-	sta $2001
+	sta PPU_MASK
 	
 endReset:
 	jmp endReset

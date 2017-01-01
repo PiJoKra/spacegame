@@ -7,7 +7,7 @@ resetPlayerVariables:
 	lda #$4
 	sta playerSpeed
 	
-	lda #$40
+	lda #$80
 	sta playerX
 	sta playerY
 	

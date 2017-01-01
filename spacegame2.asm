@@ -49,7 +49,10 @@ PPU_DATA = $2007
 
 ;PPU Object Attribute Memory
 PPU_OAM_ADDRESS = $2003
+	;PPU_OAM_DATA is not used, as it can cause some weird behavior that I do not fully understand myself.
+	;Instead, data is written to $0200, and than automatically transferred to the PPU. For this last thing to work PPU_OAM_DMA has to be set to $02
 PPU_OAM_DATA = $2004
+	;High bit of OAM. When PPU_OAM_DMA has a value of $XX, the data at address $XX00 will be read and transferred to the PPU to draw as sprites
 PPU_OAM_DMA = $4014
 
 ;Central Processing Unit ports
@@ -154,11 +157,6 @@ enableSprites:
 	;http://wiki.nesdev.com/w/index.php/PPU_registers#Mask_.28.242001.29_.3E_write
 	lda #%00011110
 	sta PPU_MASK
-	
-	lda #$00
-	sta PPU_OAM_ADDRESS
-	lda #$02
-	sta PPU_OAM_DMA
 
 	
 endReset:
@@ -172,6 +170,10 @@ waitVBlank:
 ;==================================================;
 
 NMI:
+	lda #$00
+	sta PPU_OAM_ADDRESS
+	lda #$02
+	sta PPU_OAM_DMA
 	
 	jsr readInput
 	jsr repositionPlayer

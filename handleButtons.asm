@@ -10,12 +10,16 @@ BUTTON_RIGHT	= %00000001
 CAN_SHOOT_COUNTER = $70
 
 readInput:
+	;As long as the first bit of $4016 is 1, the shift registers of the controllers are reloaded continuously which means that you can only get the state of the A button
+	;Writing first 1, then 0 to the CPU_JOYSTICK_1 will set the first bit to 0, so other buttons can be read as well
+	;This applies to all controllers
+	;http://wiki.nesdev.com/w/index.php/Standard_controller#Input_.28.244016_write.29
 	lda #$01
 	sta CPU_JOYSTICK_1
 	lda #$00
 	sta CPU_JOYSTICK_1
 	
-	ldx #$08
+	ldx #$08 ;8 different buttons
 	loopReadInput:
 		lda CPU_JOYSTICK_1
 		lsr A

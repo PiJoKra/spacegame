@@ -1,7 +1,7 @@
 PLAYER_MIN_X = $0A
 PLAYER_MIN_Y = $0A
-PLAYER_MAX_X = $F5
-PLAYER_MAX_Y = $EB
+PLAYER_MAX_X = $E5
+PLAYER_MAX_Y = $DB
 
 resetPlayerVariables:
 	lda #$4

@@ -4,19 +4,30 @@ PLAYER_MAX_X = $F5
 PLAYER_MAX_Y = $EB
 
 playerSprite:
-	.db $08, $00, $01, $08
-	.db $08, $01, $01, $10
-	.db $10, $10, $01, $08
-	.db $10, $11, $01, $10
-
+	.db $00, $00, $01, $00
+	.db $00, $01, $01, $00
+	.db $00, $10, $01, $00
+	.db $00, $11, $01, $00
 
 resetPlayerVariables:
 	lda #$4
 	sta playerSpeed
 	
-	lda #$80
+	lda #$40
 	sta playerX
 	sta playerY
+	
+loadPlayerSprite:
+	ldx #$00
+	loopLoadPlayerSprite:
+		lda playerSprite, x
+		sta $0200, x
+		sta $30, x
+		inx
+		
+		cpx #$10
+		beq loopLoadPlayerSprite
+	rts
 
 repositionPlayer:
 

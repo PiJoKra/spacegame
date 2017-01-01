@@ -21,6 +21,7 @@ canShoot .rs 1
 	.org $E000
 	.include "spacegame/palette.asm"
 	.include "spacegame/backgroundGame.asm"
+	.include "spacegame/player.asm"
 	
 	.org $FFFA
 	.dw	NMI
@@ -36,16 +37,20 @@ canShoot .rs 1
 	.include "spacegame/strings.asm"
 	.include "spacegame/updateScore.asm"
 	.include "spacegame/handleButtons.asm"
-	.include "spacegame/player.asm"
 
 ;Picture Processing Unit ports
 PPU_CONTROLLER = $2000
-PPU_MASK = $2001	
+PPU_MASK = $2001
 PPU_STATUS_REGISTER = $2002
 	;after setting PPU_ADDRESS_REGISTER you need to set PPU_SCROLL again as they have a shared internal register. That is why it is best to change PPU_SCROLL at the end. (http://wiki.nesdev.com/w/index.php/PPU_scrolling#Frequent_pitfalls)
 PPU_SCROLL = $2005
 PPU_ADDRESS_REGISTER = $2006
 PPU_DATA = $2007
+
+;PPU Object Attribute Memory
+PPU_OAM_ADDRESS = $2003
+PPU_OAM_DATA = $2004
+PPU_OAM_DMA = $4014
 
 ;Central Processing Unit ports
 CPU_JOYSTICK_1 = $4016
@@ -128,24 +133,33 @@ loadPalette:
 background:
 	jsr loadBackgroundGame	
 	
+	
+initialisePlayer:
+	jsr resetPlayerVariables
+	
 enableNMI:
+	;First bit enables NMI on every vertical blanking interval
+	;4th bit says that the background tiles should be read from $1000 instead of $0000
+	;http://wiki.nesdev.com/w/index.php/PPU_registers#Controller_.28.242000.29_.3E_write
 	lda #%10010000
 	sta PPU_CONTROLLER
 	
 enableSprites:
+	;First three bits are to emphasise Blue, Green or Red (not used)
+	;4th bit enables sprites
+	;5th bit enables backgrounds
+	;6th bit enables sprites to be shown in the first 8 columns
+	;7th bit enables background to be shown in the first 8 columns
+	;8th bit enables grayscale mode (not used)
+	;http://wiki.nesdev.com/w/index.php/PPU_registers#Mask_.28.242001.29_.3E_write
 	lda #%00011110
 	sta PPU_MASK
-
-initialisePlayer:
-	jsr resetPlayerVariables
 	
-;initialisePlayer:
-;	lda #$4
-;	sta playerSpeed
-;
-;	lda #$80
-;	sta playerX
-;	sta playerY
+	lda #$00
+	sta PPU_OAM_ADDRESS
+	lda #$02
+	sta PPU_OAM_DMA
+
 	
 endReset:
 	jmp endReset
@@ -165,7 +179,7 @@ NMI:
 	jsr updateScore
 	jsr updateScoreHUD
 	
-	;Set PPU_SCROLL to 0000 as it gets reset every time PPU_ADDRESS_REGISTER gets read
+	;Set PPU_SCROLL to 0000 as it gets reset every time PPU_ADDRESS_REGISTER is read
 	lda #$00
 	sta PPU_SCROLL
 	sta PPU_SCROLL

@@ -52,7 +52,7 @@ PPU_OAM_ADDRESS = $2003
 	;PPU_OAM_DATA is not used, as it can cause some weird behavior that I do not fully understand myself.
 	;Instead, data is written to $0200, and than automatically transferred to the PPU. For this last thing to work PPU_OAM_DMA has to be set to $02
 PPU_OAM_DATA = $2004
-	;High bit of OAM. When PPU_OAM_DMA has a value of $XX, the data at address $XX00 will be read and transferred to the PPU to draw as sprites
+	;High bit of OAM. When PPU_OAM_DMA has a value of $XX, the data at addresses $XX00-$XXFF will be read and transferred to the PPU to draw as sprites
 PPU_OAM_DMA = $4014
 
 ;Central Processing Unit ports

@@ -15,10 +15,17 @@ loadBackgroundGame:
 		bne loopLoadBackgroundHUD
 		
 	lda #$18
+	ldx #$1A
 	loopLoadBackgroundRest:
-		sta PPU_DATA
+		ldy #$20
+		loopLoadBackgroundRow:
 		
-		inx
+			sta PPU_DATA
+			dey
+			cpy #$0
+			bne loopLoadBackgroundRow
+		
+		dex
 		cpx #$0
 		bne loopLoadBackgroundRest
 		

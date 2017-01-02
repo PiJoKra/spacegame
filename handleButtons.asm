@@ -7,8 +7,6 @@ BUTTON_DOWN		= %00000100
 BUTTON_LEFT		= %00000010
 BUTTON_RIGHT	= %00000001
 
-CAN_SHOOT_COUNTER = $70
-
 readInput:
 	;As long as the first bit of $4016 is 1, the shift registers of the controllers are reloaded continuously which means that you can only get the state of the A button
 	;Writing first 1, then 0 to the CPU_JOYSTICK_1 will set the first bit to 0, so other buttons can be read as well

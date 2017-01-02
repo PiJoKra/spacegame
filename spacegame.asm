@@ -8,13 +8,6 @@
 gamestate .rs 1
 score .rs 4
 buttons .rs 1
-
-playerSpeed .rs 1
-playerX .rs 1
-playerY .rs 1
-canShoot .rs 1
-
-
 	
 	.bank 1
 	

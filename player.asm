@@ -1,7 +1,14 @@
+playerSpeed .rs 1
+playerX .rs 1
+playerY .rs 1
+canShoot .rs 1
+
 PLAYER_MIN_X = $0A
 PLAYER_MIN_Y = $0A
 PLAYER_MAX_X = $E5
 PLAYER_MAX_Y = $DB
+
+CAN_SHOOT_COUNTER = $70
 
 resetPlayerVariables:
 	lda #$4

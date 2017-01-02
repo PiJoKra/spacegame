@@ -71,12 +71,12 @@ reset:
 	ldx #$FF
 	txs
 	
-	lda #$00
-	sta PPU_CONTROLLER
-	sta PPU_MASK
-	sta PPU_SCROLL
-	sta PPU_SCROLL
-	sta APU_DELTA_MODULATION_CHANNEL
+	inx
+	stx PPU_CONTROLLER
+	stx PPU_MASK
+	stx PPU_SCROLL
+	stx PPU_SCROLL
+	stx APU_DELTA_MODULATION_CHANNEL
 	
 	jsr waitVBlank
 	

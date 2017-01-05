@@ -3,7 +3,17 @@
 	.inesmap 0
 	.inesmir 1
 	
+	;Start variables at location $0000
 	.rsset $0000
+	
+	;Important: the stack of NES uses addresses $0100-$01FF, 
+	;so those 256 addresses cannot be used for variables
+	;The stack starts filling up at address $01FF, so you *can* store a few
+	;variables in the lowest addresses of the stack as long as the stack does 
+	;not get to filled, but to be safe I will not do that 
+	
+	;Another note is that a lot of NES game developers use addresses $0200-$02FF
+	;to store the sprites the OAM can send to the PPU, this will be done in this game too
 	
 gamestate .rs 1
 score .rs 4
@@ -90,7 +100,6 @@ clearMemory:
 	sta $0500, x
 	sta $0600, x
 	sta $0700, x
-	
 	inx
 	bne clearMemory
 	

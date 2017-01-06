@@ -27,7 +27,7 @@ buttons .rs 1
 	.include "spacegame/player.asm"
 	
 	.org $FFFA
-	.dw	NMI
+	.dw NMI
 	.dw reset
 	.dw 0
 	

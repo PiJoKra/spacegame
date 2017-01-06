@@ -4,6 +4,7 @@ playerY .rs 1
 canShoot .rs 1
 ;A bullet will be two digits x and y. For the player 16 bullets will be remembered,
 ;meaning we need a space of 32 bytes
+bulletCount .rs 1
 bullets .rs 32
 
 PLAYER_MIN_X = $0A
@@ -14,6 +15,7 @@ PLAYER_MAX_Y = $DB
 PLAYER_SPRITE = $0200
 
 CAN_SHOOT_COUNTER = $70
+BULLET_SPEED = $6
 
 resetPlayerVariables:
 	lda #$4
@@ -97,10 +99,33 @@ allignPlayerSprites:
 	
 	rts
 	
-shoot:
-	ldx #$00
+updatePlayerBullets:
+	ldx #$00 ;cursor index bullet
+	ldy #$00 ;new index of bullet
 	
+	sec
+	loopOverBullets:
+		lda bullets, x
+		sbc #BULLET_SPEED
+		
+		inx
+		inx
+		cpx #$20
+		
+	rts
 	
+playerShoot:
+	inc bulletCount
+	
+	lda bulletCount
+	clc
+	adc bulletCount
+	tax ;Store bulletCount * 2 in X
+	
+	lda playerX
+	sta bullets, x
+	lda playerY
+	sta bullets+1, x
 	
 	rts
 	

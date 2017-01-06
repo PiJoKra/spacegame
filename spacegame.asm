@@ -180,6 +180,8 @@ NMI:
 	lda #$02
 	sta PPU_OAM_DMA
 	
+	jsr updatePlayerBullets
+	
 	jsr readInput
 	jsr repositionPlayer
 	

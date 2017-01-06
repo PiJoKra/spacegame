@@ -67,14 +67,16 @@ handleButtonLeft:
 	
 handleButtonA:
 	lda canShoot
-	beq .shoot
+	beq handleButtonAShoot
 	dec canShoot
 	rts
 	
-	.shoot:
+	handleButtonAShoot:
 		lda buttons
 		and #BUTTON_A
 		beq returnFromHandleInput
+		
+		jsr playerShoot
 		
 		lda #CAN_SHOOT_COUNTER
 		sta canShoot

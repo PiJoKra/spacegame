@@ -120,6 +120,7 @@ clearSpriteData:
 loadPalette:
 	lda PPU_STATUS_REGISTER
 	
+	;The palettes are stored on addresses $3F00-$3F1F
 	lda #$3F
 	sta PPU_ADDRESS_REGISTER
 	lda #$00
@@ -172,6 +173,7 @@ waitVBlank:
 ;==================================================;
 
 NMI:
+	;Sprites are stored from $0200-$02FF
 	lda #$00
 	sta PPU_OAM_ADDRESS
 	lda #$02

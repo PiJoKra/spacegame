@@ -11,6 +11,8 @@ PLAYER_MIN_Y = $0A
 PLAYER_MAX_X = $E5
 PLAYER_MAX_Y = $DB
 
+PLAYER_SPRITE = $0200
+
 CAN_SHOOT_COUNTER = $70
 
 resetPlayerVariables:
@@ -80,18 +82,25 @@ allignPlayerSprites:
 	clc
 
 	lda playerY
-	sta $200
-	sta $204
+	sta PLAYER_SPRITE
+	sta PLAYER_SPRITE+$4
 	adc #$8
-	sta $208
-	sta $20C
+	sta PLAYER_SPRITE+$8
+	sta PLAYER_SPRITE+$C
 	
 	lda playerX
-	sta $203
-	sta $20B
+	sta PLAYER_SPRITE+$3
+	sta PLAYER_SPRITE+$B
 	adc #$8
-	sta $207
-	sta $20F
+	sta PLAYER_SPRITE+$7
+	sta PLAYER_SPRITE+$F
+	
+	rts
+	
+shoot:
+	ldx #$00
+	
+	
 	
 	rts
 	

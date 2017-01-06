@@ -1,6 +1,6 @@
 updateScore:
 	ldx #SCORE_DIGITS
-	dex
+	dex ;counting starts at 0, so we need to decrease by one
 	inc score, x
 	
 	sec

@@ -16,7 +16,11 @@
 	;to store the sprites the OAM can send to the PPU, this will be done in this game too
 	
 gamestate .rs 1
-score .rs 4
+
+;Score will be a 8 digit number
+score .rs 8
+SCORE_DIGITS = $08
+
 buttons .rs 1
 	
 	.bank 1

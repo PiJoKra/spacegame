@@ -1,5 +1,6 @@
 updateScore:
-	ldx #$3
+	ldx #SCORE_DIGITS
+	dex
 	inc score, x
 	
 	sec
@@ -35,7 +36,7 @@ updateScoreHUD:
 		sta PPU_DATA
 		
 		inx
-		cpx #$4
+		cpx #SCORE_DIGITS
 		bne loopUpdateScoreHUD
 		
 	rts

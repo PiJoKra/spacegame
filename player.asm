@@ -2,6 +2,9 @@ playerSpeed .rs 1
 playerX .rs 1
 playerY .rs 1
 canShoot .rs 1
+;A bullet will be two digits x and y. For the player 16 bullets will be remembered,
+;meaning we need a space of 32 bytes
+bullets .rs 32
 
 PLAYER_MIN_X = $0A
 PLAYER_MIN_Y = $0A

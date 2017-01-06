@@ -27,7 +27,7 @@ loadPlayerSprite:
 	ldx #$00
 	loopLoadPlayerSprite:
 		lda playerSprite, x
-		sta $0200, x
+		sta PLAYER_SPRITE, x
 		
 		inx
 		cpx #$10
@@ -84,14 +84,14 @@ allignPlayerSprites:
 	lda playerY
 	sta PLAYER_SPRITE
 	sta PLAYER_SPRITE+$4
-	adc #$8
+	adc #PPU_OAM_SPRITE_SIZE
 	sta PLAYER_SPRITE+$8
 	sta PLAYER_SPRITE+$C
 	
 	lda playerX
 	sta PLAYER_SPRITE+$3
 	sta PLAYER_SPRITE+$B
-	adc #$8
+	adc #PPU_OAM_SPRITE_SIZE
 	sta PLAYER_SPRITE+$7
 	sta PLAYER_SPRITE+$F
 	

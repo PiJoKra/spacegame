@@ -61,6 +61,7 @@ PPU_OAM_ADDRESS = $2003
 PPU_OAM_DATA = $2004
 	;High bit of OAM. When PPU_OAM_DMA has a value of $XX, the data at addresses $XX00-$XXFF will be read and transferred to the PPU to draw as sprites
 PPU_OAM_DMA = $4014
+PPU_OAM_SPRITE_SIZE = $8
 
 ;Central Processing Unit ports
 CPU_JOYSTICK_1 = $4016

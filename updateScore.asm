@@ -31,8 +31,10 @@ updateScoreHUD:
 	sta PPU_ADDRESS_REGISTER
 	
 	ldx #$00
+	clc
 	loopUpdateScoreHUD:
 		lda score, x
+		adc #$30
 		sta PPU_DATA
 		
 		inx

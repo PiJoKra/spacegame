@@ -13,9 +13,9 @@
 palette:
 	;Background colors
 	.db $00, $30, $00, $1F ;White, Gray, Black
-	.db $00, $11, $11, $11
-	.db $00, $11, $11, $11
-	.db $00, $11, $11, $11
+	.db $00, $11, $21, $30
+	.db $00, $30, $24, $1F
+	.db $00, $30, $2A, $1F
 
 	;Sprite colors
 	;First color is always used for transparancy and 

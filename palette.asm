@@ -1,3 +1,9 @@
+;The first color of the nth background palette is also the first color of the
+;nth sprite palette; they mirror each other
+
+;The first color of the first background palette or sprite palette is the 
+;color used as the background color
+
 ;In the palette the following colors cannot be used:
 ;	$0D: this extreme dark color causes the signal to go far lower the 
 ;		normal black level, so some televisions mistake it for a blanking signal
@@ -12,15 +18,15 @@
 
 palette:
 	;Background colors
-	.db $00, $30, $00, $1F ;White, Gray, Black
+	.db $1F, $30, $2A, $24 ;Black, White, Green, Purple
 	.db $00, $11, $21, $30
-	.db $00, $30, $24, $1F
-	.db $00, $30, $2A, $1F
+	.db $1F, $30, $24, $1F
+	.db $1F, $30, $2A, $1F
 
 	;Sprite colors
 	;First color is always used for transparancy and 
 	;needs to be the same color (last one I am not 100% sure of tho...)
-	.db $00, $0F, $16, $30 ;Black, Red, White
-	.db $00, $11, $21, $30 ;Blue, Light blue, White
-	.db $00, $0F, $0F, $0F
-	.db $00, $0F, $0F, $0F 
+	.db $1F, $0F, $16, $30 ;Black, Red, White
+	.db $1F, $11, $21, $30 ;Blue, Light blue, White
+	.db $1F, $0F, $0F, $0F
+	.db $1F, $0F, $0F, $0F 

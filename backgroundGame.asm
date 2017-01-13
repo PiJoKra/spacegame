@@ -77,8 +77,8 @@ attributes:
 	;That the blocks have dimension of 16x16 means that 4 backgroundtiles have to
 	;use the same colorpalette
 	
-	;Rows 1 and 2:
-	.db %00000000, %00000010, %00000010, %00000000, %11000000, %11110000, %10100000, %00100000
+	;Rows 1 and 2 (HUD):
+	.db 0, 0, 0, 0, 0, 0, 0, 0
 	
 	;Rows 3 and 4:
 	.db %00000000, %00000000, %00000000, %00000000, %00100000, %00000000, %00000000, %00000000

@@ -10,10 +10,10 @@
 	;so those 256 addresses cannot be used for variables
 	;The stack starts filling up at address $01FF, so you *can* store a few
 	;variables in the lowest addresses of the stack as long as the stack does 
-	;not get to filled, but to be safe I will not do that 
+	;not get too filled, but to be safe I will not do that 
 	
 	;Another note is that a lot of NES game developers use addresses $0200-$02FF
-	;to store the sprites the OAM can send to the PPU, this will be done in this game too
+	;to store the OAM, this will be done in this game too
 	
 gamestate .rs 1
 
@@ -75,6 +75,11 @@ reset:
 	
 	;clear decimal mode, as it is not supported by NES anyway
 	cld
+	
+	;Disable IRQ
+	;I normally already did this by pushing 0 to $FFFE (as seen in bank 1),
+	;but some emulators don't run without this instruction (e.g. VirtualNES)
+	sei
 	
 	;7th bit of framecounter control is the interupt inhibit flag
 	;Setting it to 1 puts it into a 5-step sequence
@@ -180,7 +185,7 @@ NMI:
 	lda #$02
 	sta PPU_OAM_DMA
 	
-	jsr updatePlayerBullets
+	;jsr updateBullets
 	
 	jsr readInput
 	jsr repositionPlayer

@@ -18,8 +18,8 @@
 
 palette:
 	;Background colors
-	.db $1F, $30, $2A, $24 ;Black, White, Green, Purple
-	.db $00, $11, $21, $30
+	.db $1F, $30, $16, $00 ;Black, White, Green, Purple
+	.db $1F, $11, $21, $30
 	.db $1F, $30, $24, $1F
 	.db $1F, $30, $2A, $1F
 

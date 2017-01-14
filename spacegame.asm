@@ -1,3 +1,12 @@
+;Helpful resources:
+;http://www.6502.org/
+;	http://www.6502.org/tutorials/compare_instructions.html
+;http://nesdev.com/
+;	wiki.nesdev.com 
+;	forum.nesdev.com 
+;https://skilldrick.github.io/easy6502/ (Only used for quick tests)
+
+
 	.inesprg 1
 	.ineschr 1
 	.inesmap 0
@@ -76,7 +85,8 @@ reset:
 	;clear decimal mode, as it is not supported by NES anyway
 	cld
 	
-	;Disable IRQ
+	;Disable IRQ (Setting the interupt flag only allows NMI to be executed, 
+	;	http://wiki.nesdev.com/w/index.php/CPU_status_flag_behavior)
 	;I normally already did this by pushing 0 to $FFFE (as seen in bank 1),
 	;but some emulators don't run without this instruction (e.g. VirtualNES)
 	sei
@@ -87,11 +97,12 @@ reset:
 	lda %01000000
 	sta APU_FRAMECOUNTER_CONTROL
 	
-	;Initialize the stack
+	;Initialize the stack by setting the stack pointer to $FF, the last position of the stack
+	;The stack in NES is descending, that is why the highest value is assigned
 	ldx #$FF
 	txs
 	
-	inx
+	inx ;$FF + 1 = $0, so x is now 0
 	stx PPU_CONTROLLER
 	stx PPU_MASK
 	stx PPU_SCROLL
@@ -104,7 +115,7 @@ reset:
 	lda #$00
 clearMemory:
 	sta $0000, x
-	sta $0100, x
+	sta $0100, x ;The stack
 	sta $0300, x
 	sta $0400, x
 	sta $0500, x
@@ -185,7 +196,7 @@ NMI:
 	lda #$02
 	sta PPU_OAM_DMA
 	
-	;jsr updateBullets
+	jsr updatePlayerBullets
 	
 	jsr readInput
 	jsr repositionPlayer

@@ -14,8 +14,9 @@ PLAYER_MAX_Y = $DB
 
 PLAYER_SPRITE = $0200
 
-CAN_SHOOT_COUNTER = $70
+CAN_SHOOT_COUNTER = $45
 BULLET_SPEED = $6
+MAX_PLAYER_BULLETS = $10
 
 resetPlayerVariables:
 	lda #$4
@@ -104,30 +105,66 @@ updatePlayerBullets:
 	ldy #$00 ;new index of bullet
 	
 	sec
+	;AX AY BX BY 00 00 CX CY
+	;AX AY BX BY CX CY 00 00
 	loopOverBullets:
 		lda bullets, x
+		
+		;Stop if the bullets x-position is 0
+		;x=0 means that there is no bullet since bullets should despawn when near walls
+		cmp #$00
+		beq .rts
+		
 		sbc #BULLET_SPEED
+		sta bullets, x
 		
-		inx
-		inx
-		cpx #$20
+		cmp #$00
+		bcc .destroyBullet
+		;bcc .continue
 		
-	rts
+		sta bullets, y
+		lda bullets+$1, x
+		sta bullets+$1, y
+		iny
+		iny
+		
+		.destroyBullet:
+			lda #$0
+			sta bullets, x
+			sta bullets+$1, x
+		
+		.continue:
+		
+			inx
+			inx
+			cpx #$20
+			bne loopOverBullets
+		
+		sty bulletCount
+	
+	.rts:	
+		rts
 	
 playerShoot:
-	inc bulletCount
 	
 	lda bulletCount
+	cmp #MAX_PLAYER_BULLETS
+	beq .rts
+		
+	inc bulletCount
+	
 	clc
 	adc bulletCount
 	tax ;Store bulletCount * 2 in X
+	dex
 	
 	lda playerX
 	sta bullets, x
 	lda playerY
 	sta bullets+1, x
 	
-	rts
+	.rts:
+		rts
 	
 
 playerSprite:

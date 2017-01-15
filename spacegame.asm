@@ -1,7 +1,7 @@
 ;A space game
 
 ;/!\ Important /!\
-;Before working on this I had zero knowledge of programming in NESASM
+;Before working on this I had zero knowledge of programming in NESASM (or any other assembly language)
 ;I tried to comment as much of the code as possible, that does not mean everything
 ;written is correct. Since I am a beginner, I could have made some mistakes here
 ;and there, so read with caution.
@@ -12,12 +12,23 @@
 ;I also used these helpful resources
 ;This might be the first project I have ever worked on where I did not 
 ;get any help from StackOverflow.com
+
 ;6502.org - http://www.6502.org/
 ;	http://www.6502.org/tutorials/compare_instructions.html
 ;NESDev - http://nesdev.com/
 ;	wiki.nesdev.com 
 ;	forum.nesdev.com 
 ;easy6502 - https://skilldrick.github.io/easy6502/ (Only used for quick tests)
+
+
+;General information I found about NESASM
+
+;All memory spaces are 8-bit. Sometimes a 16-bit integer is needed, and that is solved
+;by allowing to write to the memory space two times. Since NESASM is little endian, the
+
+;lowest bit needs to be written first.
+;NESASM uses hexadecimal and binary numbers, not decimal numbers. On some places however
+;(TODO: check if this is correct) It seems that this is not the case for zero, which can also be written in de decimal format
 
 
 	.inesprg 1

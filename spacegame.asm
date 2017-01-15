@@ -1,10 +1,23 @@
-;Helpful resources:
-;http://www.6502.org/
+;A space game
+
+;/!\ Important /!\
+;Before working on this I had zero knowledge of programming in NESASM
+;I tried to comment as much of the code as possible, that does not mean everything
+;written is correct. Since I am a beginner, I could have made some mistakes here
+;and there, so read with caution.
+;I read the following tutorial, and than started on the project:
+;http://nintendoage.com/forum/messageview.cfm?StartRow=1&catid=22&threadid=7155
+
+
+;I also used these helpful resources
+;This might be the first project I have ever worked on where I did not 
+;get any help from StackOverflow.com
+;6502.org - http://www.6502.org/
 ;	http://www.6502.org/tutorials/compare_instructions.html
-;http://nesdev.com/
+;NESDev - http://nesdev.com/
 ;	wiki.nesdev.com 
 ;	forum.nesdev.com 
-;https://skilldrick.github.io/easy6502/ (Only used for quick tests)
+;easy6502 - https://skilldrick.github.io/easy6502/ (Only used for quick tests)
 
 
 	.inesprg 1

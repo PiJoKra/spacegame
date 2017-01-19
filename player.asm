@@ -5,6 +5,7 @@ canShoot .rs 1
 ;A bullet will be two digits x and y. For the player 16 bullets will be remembered,
 ;meaning we need a space of 32 bytes
 bulletCount .rs 1
+bulletLastIndex .rs 1
 bullets .rs 32
 
 PLAYER_MIN_X = $0A
@@ -15,7 +16,7 @@ PLAYER_MAX_Y = $DB
 PLAYER_SPRITE = $0200
 
 CAN_SHOOT_COUNTER = $45
-BULLET_SPEED = $6
+BULLET_SPEED = $1
 MAX_PLAYER_BULLETS = $10
 
 resetPlayerVariables:
@@ -104,46 +105,43 @@ updatePlayerBullets:
 	ldx #$00 ;cursor index bullet
 	ldy #$00 ;new index of bullet
 	
-	sec
-	;AX AY BX BY 00 00 CX CY
-	;AX AY BX BY CX CY 00 00
-	loopOverBullets:
+	lda bulletCount
+	cmp #$0
+	beq .rts
+	
+	;Making sure the bullets are at the start of the stack, and all the empty spots
+	;are at the end
+	;AX AY 00 00 BX BY 00 00 CX CY
+	;AX AY BX BY CX CY 00 00 00 00
+	.loopOverBullets:
 		lda bullets, x
 		
-		;Stop if the bullets x-position is 0
-		;x=0 means that there is no bullet since bullets should despawn when near walls
-		cmp #$00
-		beq .rts
-		
+		sec
 		sbc #BULLET_SPEED
-		sta bullets, x
-		
-		cmp #$00
-		bcc .destroyBullet
-		;bcc .continue
-		
+		bcc .destroyBullet ;If the Y-position of the bullet <= 0
+
 		sta bullets, y
-		lda bullets+$1, x
-		sta bullets+$1, y
+		lda bullets+1, x
+		sta bullets+1, y
+
 		iny
 		iny
-		
-		.destroyBullet:
-			lda #$0
-			sta bullets, x
-			sta bullets+$1, x
-		
+
 		.continue:
-		
 			inx
 			inx
-			cpx #$20
-			bne loopOverBullets
-		
-		sty bulletCount
-	
+			cpx #bulletLastIndex
+			bcs .loopOverBullets
+
 	.rts:	
 		rts
+		
+	.destroyBullet:
+		dec bulletCount
+		lda #$0
+		sta bullets, y
+		sta bullets+1, y
+		jmp .continue
 	
 playerShoot:
 	
@@ -156,7 +154,9 @@ playerShoot:
 	clc
 	adc bulletCount
 	tax ;Store bulletCount * 2 in X
-	dex
+	dex ;Since counting starts from 0, so prevent the off-by-one-error
+	
+	stx bulletLastIndex
 	
 	lda playerX
 	sta bullets, x

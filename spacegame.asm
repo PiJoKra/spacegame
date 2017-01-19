@@ -19,6 +19,7 @@
 ;	wiki.nesdev.com 
 ;	forum.nesdev.com 
 ;easy6502 - https://skilldrick.github.io/easy6502/ (Only used for quick tests)
+;Source code of NESASM - http://www.nespowerpak.com/nesasm/
 
 
 ;General information I found about NESASM
@@ -30,11 +31,14 @@
 ;NESASM uses hexadecimal and binary numbers, not decimal numbers. On some places however
 ;(TODO: check if this is correct) It seems that this is not the case for zero, which can also be written in de decimal format
 
+;(TODO) putting dot in front of label makes it local (as seen in symbol.c#106)
+;https://github.com/thentenaar/nesasm/blob/master/documentation/usage.txt
 
-	.inesprg 1
-	.ineschr 1
-	.inesmap 0
-	.inesmir 1
+
+	.inesprg 1 ;1 16kb prg bank
+	.ineschr 1 ;1 8kg chr bank
+	.inesmap 0 ;Do not use a mapper
+	.inesmir 1 ;Mirror vertical
 	
 	;Start variables at location $0000
 	.rsset $0000

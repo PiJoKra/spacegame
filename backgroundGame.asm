@@ -6,7 +6,7 @@ loadBackgroundGame:
 	lda #$00
 	sta PPU_ADDRESS_REGISTER
 
-	ldx #$00
+	ldx 0
 	loopLoadBackgroundHUD:
 		lda backgroundGame, x
 		sta PPU_DATA
@@ -22,11 +22,11 @@ loadBackgroundGame:
 		
 			sta PPU_DATA
 			dey
-			cpy #$0
+			cpy 0
 			bne loopLoadBackgroundRow
 		
 		dex
-		cpx #$0
+		cpx 0
 		bne loopLoadBackgroundRest
 		
 	lda PPU_STATUS_REGISTER
@@ -36,7 +36,7 @@ loadBackgroundGame:
 	lda #$C0
 	sta PPU_ADDRESS_REGISTER
 	
-	ldx #$00
+	ldx 0
 	loopLoadAttributes:
 		lda attributes, x
 		sta PPU_DATA

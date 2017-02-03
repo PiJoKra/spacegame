@@ -169,23 +169,29 @@ playerShoot:
 		
 showBullets:
 	ldx #$FE ;$FE + 2 = 00, 0 first index
+	ldy #$00
 	
 	.showBulletsLoop:
 		inx
 		inx
 
 		lda bullets, x
-		sta PLAYER_BULLET_SPRITES, x
+		sta PLAYER_BULLET_SPRITES, y
 		
 		lda #$02
-		sta PLAYER_BULLET_SPRITES+$1, x
+		sta PLAYER_BULLET_SPRITES+$1, y
 		
 		lda #$0
-		sta PLAYER_BULLET_SPRITES+$2, x
+		sta PLAYER_BULLET_SPRITES+$2, y
 		
 		lda bullets+$1, x
-		sta PLAYER_BULLET_SPRITES+$3, x
-
+		sta PLAYER_BULLET_SPRITES+$3, y
+		
+		iny
+		iny
+		iny
+		iny
+		
 		cpx bulletLastIndex
 		bne .showBulletsLoop
 	rts

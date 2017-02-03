@@ -16,8 +16,8 @@ PLAYER_MAX_Y = $DB
 PLAYER_SPRITE = $0200
 PLAYER_BULLET_SPRITES = $0210
 
-CAN_SHOOT_COUNTER = $45
-BULLET_SPEED = $1
+CAN_SHOOT_COUNTER = $10
+BULLET_SPEED = $6
 MAX_PLAYER_BULLETS = $10
 
 resetPlayerVariables:
@@ -168,6 +168,9 @@ playerShoot:
 		rts
 		
 showBullets:
+	;Two different counters
+	;Counter x is used for the bullets that are stored. It will make jumps of two since it contains 2 values (Y and X)
+	;Counter y is used for the bullets on the screen. It will make jumps of four since it contains 4 values
 	ldx #$FE ;$FE + 2 = 00, 0 first index
 	ldy #$00
 	

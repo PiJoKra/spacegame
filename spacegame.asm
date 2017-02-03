@@ -228,6 +228,7 @@ NMI:
 	
 	jsr readInput
 	jsr repositionPlayer
+	jsr showBullets
 	
 	jsr updateScore
 	jsr updateScoreHUD

@@ -14,6 +14,7 @@ PLAYER_MAX_X = $E5
 PLAYER_MAX_Y = $DB
 
 PLAYER_SPRITE = $0200
+PLAYER_BULLET_SPRITES = $0210
 
 CAN_SHOOT_COUNTER = $45
 BULLET_SPEED = $1
@@ -160,10 +161,34 @@ playerShoot:
 	lda playerY
 	sta bullets, x
 	lda playerX
+	adc #$04
 	sta bullets+1, x
 	
 	.rts:
 		rts
+		
+showBullets:
+	ldx #$FE ;$FE + 2 = 00, 0 first index
+	
+	.showBulletsLoop:
+		inx
+		inx
+
+		lda bullets, x
+		sta PLAYER_BULLET_SPRITES, x
+		
+		lda #$02
+		sta PLAYER_BULLET_SPRITES+$1, x
+		
+		lda #$0
+		sta PLAYER_BULLET_SPRITES+$2, x
+		
+		lda bullets+$1, x
+		sta PLAYER_BULLET_SPRITES+$3, x
+
+		cpx bulletLastIndex
+		bne .showBulletsLoop
+	rts
 	
 
 playerSprite:

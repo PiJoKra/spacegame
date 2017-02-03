@@ -118,7 +118,7 @@ updatePlayerBullets:
 		
 		sec
 		sbc #BULLET_SPEED
-		bcc .destroyBullet ;If the Y-position of the bullet <= 0
+		;bcc .destroyBullet ;If the Y-position of the bullet <= 0
 
 		sta bullets, y
 		lda bullets+1, x
@@ -128,19 +128,21 @@ updatePlayerBullets:
 		iny
 
 		.continue:
+			cpx bulletLastIndex
 			inx
 			inx
-			cpx #bulletLastIndex
-			bcs .loopOverBullets
+			bcc .loopOverBullets
 
-	.rts:	
+	.rts:
+		lda bulletLastIndex
+		sta $30
 		rts
 		
 	.destroyBullet:
 		dec bulletCount
-		lda #$0
-		sta bullets, y
-		sta bullets+1, y
+		;lda #$0
+		;sta bullets, y
+		;sta bullets+1, y
 		jmp .continue
 	
 playerShoot:

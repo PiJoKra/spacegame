@@ -2,7 +2,7 @@
 updatePlayerBullets              = $E177
 initialisePlayer                 = $8130
 loadPalette                      = $8113
-playerShoot                      = $E1AA
+playerShoot                      = $E1A7
 clearSpriteData                  = $810A
 restrictPlayerPositionX          = $E135
 repositionPlayer                 = $E117
@@ -38,7 +38,7 @@ loopLoadAttributes               = $E060
 loadBackgroundGame               = $E020
 NMI                              = $8146
 handleButtonAShoot               = $80BD
-playerSprite                     = $E1CA
+playerSprite                     = $E1C7
 backgroundGame                   = $E06C
 handleButtonUp                   = $8070
 handleScoreDigits                = $8024

@@ -118,7 +118,7 @@ updatePlayerBullets:
 		
 		sec
 		sbc #BULLET_SPEED
-		;bcc .destroyBullet ;If the Y-position of the bullet <= 0
+		bcc .destroyBullet ;If the Y-position of the bullet <= 0
 
 		sta bullets, y
 		lda bullets+1, x

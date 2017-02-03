@@ -140,9 +140,6 @@ updatePlayerBullets:
 		
 	.destroyBullet:
 		dec bulletCount
-		;lda #$0
-		;sta bullets, y
-		;sta bullets+1, y
 		jmp .continue
 	
 playerShoot:
@@ -160,9 +157,9 @@ playerShoot:
 	
 	stx bulletLastIndex
 	
-	lda playerX
-	sta bullets, x
 	lda playerY
+	sta bullets, x
+	lda playerX
 	sta bullets+1, x
 	
 	.rts:

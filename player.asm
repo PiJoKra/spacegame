@@ -19,6 +19,7 @@ PLAYER_BULLET_SPRITES = $0210
 CAN_SHOOT_COUNTER = $10
 BULLET_SPEED = $6
 MAX_PLAYER_BULLETS = $08
+MAX_PLAYER_BULLETS_INDEX = $10
 
 resetPlayerVariables:
 	lda #$4
@@ -220,7 +221,22 @@ showBullets:
 		
 		cpx bulletLastIndex
 		bne .showBulletsLoop
-	rts
+		
+	.removeUnexistingBullets:
+		iny
+		cpy #MAX_PLAYER_BULLETS_INDEX
+		beq .rts
+		
+		lda PLAYER_BULLET_SPRITES, y
+		cmp #$FE
+		beq .rts
+		
+		lda #$FE
+		sta PLAYER_BULLET_SPRITES, y
+		jmp .removeUnexistingBullets
+		
+	.rts:	
+		rts
 	
 
 playerSprite:

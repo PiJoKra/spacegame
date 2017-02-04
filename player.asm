@@ -141,15 +141,16 @@ updatePlayerBullets:
 	dey
 	dey
 	sty bulletLastIndex
-	;iny
-	;iny
-	;.clearRedundantCells:
-		;lda #$0
-		;sta bullets, y
+	iny
+	iny
+	.clearRedundantCells:
+		lda #$0
+		sta bullets, y
+		sta bullets+$1, y
 		
-	;	dex
-	;	cpx bulletLastIndex
-	;	bne .clearRedundantCells
+		dex
+		cpx bulletLastIndex
+		bne .clearRedundantCells
 
 	.rts:
 		lda bulletLastIndex

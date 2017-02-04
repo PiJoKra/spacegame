@@ -6,7 +6,7 @@ canShoot .rs 1
 ;meaning we need a space of 32 bytes
 bulletCount .rs 1
 bulletLastIndex .rs 1
-bullets .rs 32
+bullets .rs 16
 
 PLAYER_MIN_X = $0A
 PLAYER_MIN_Y = $0A
@@ -18,7 +18,7 @@ PLAYER_BULLET_SPRITES = $0210
 
 CAN_SHOOT_COUNTER = $10
 BULLET_SPEED = $6
-MAX_PLAYER_BULLETS = $10
+MAX_PLAYER_BULLETS = $08
 
 resetPlayerVariables:
 	lda #$4
@@ -133,6 +133,23 @@ updatePlayerBullets:
 			inx
 			inx
 			bcc .loopOverBullets
+	
+	;Since the bullets are now copied one cell to the front when the previous bullet is destroyed,
+	;the old bullet values are still present on the next cell. Here these cells will be cleared
+	cpy #$00
+	beq .noMoreBullets
+	dey
+	dey
+	sty bulletLastIndex
+	;iny
+	;iny
+	;.clearRedundantCells:
+		;lda #$0
+		;sta bullets, y
+		
+	;	dex
+	;	cpx bulletLastIndex
+	;	bne .clearRedundantCells
 
 	.rts:
 		lda bulletLastIndex
@@ -142,6 +159,11 @@ updatePlayerBullets:
 	.destroyBullet:
 		dec bulletCount
 		jmp .continue
+		
+	.noMoreBullets:
+		lda #$00
+		sta bulletLastIndex
+		jmp .rts
 	
 playerShoot:
 	

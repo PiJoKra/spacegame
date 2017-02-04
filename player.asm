@@ -223,7 +223,6 @@ showBullets:
 		bne .showBulletsLoop
 		
 	.removeUnexistingBullets:
-		iny
 		cpy #MAX_PLAYER_BULLETS_INDEX
 		beq .rts
 		
@@ -233,6 +232,8 @@ showBullets:
 		
 		lda #$FE
 		sta PLAYER_BULLET_SPRITES, y
+		
+		iny
 		jmp .removeUnexistingBullets
 		
 	.rts:	

@@ -185,7 +185,7 @@ playerShoot:
 	lda playerY
 	sta bullets, x
 	lda playerX
-	adc #$04
+	adc #$04 ;Allign bullet center of player
 	sta bullets+1, x
 	
 	.rts:

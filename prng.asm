@@ -1,4 +1,4 @@
-; Written by rainwarrior
+; Written by rainwarrior, rewritten for  NESASM by me
 ; http://forums.nesdev.com/viewtopic.php?f=2&t=13172&hilit=rng&start=15#p154158
 ; http://wiki.nesdev.com/w/index.php/Random_number_generator
 ;
@@ -13,21 +13,19 @@
 ;
 ; Execution time is an average of 125 cycles (excluding jsr and rts)
 
-.zeropage
 seed: .res 2       ; initialize 16-bit seed to any value except 0
 
-.code
 prng:
 	ldx #8     ; iteration count (generates 8 bits)
 	lda seed+0
-:
+one:
 	asl        ; shift the register
 	rol seed+1
-	bcc :+
+	bcc two
 	eor #$2D   ; apply XOR feedback whenever a 1 bit is shifted out
-:
+two:
 	dex
-	bne :--
+	bne one
 	sta seed+0
 	cmp #0     ; reload flags
 	rts

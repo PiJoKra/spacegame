@@ -192,9 +192,15 @@ playerShoot:
 		rts
 		
 showBullets:
+
+	lda bulletCount
+	cmp #$00
+	beq .removeBulletsFirstIndex
+
 	;Two different counters
 	;Counter x is used for the bullets that are stored. It will make jumps of two since it contains 2 values (Y and X)
 	;Counter y is used for the bullets on the screen. It will make jumps of four since it contains 4 values
+	;Reason we start x with $FE is because we need to check (cpx) before incrementation of x
 	ldx #$FE ;$FE + 2 = 00, 0 first index
 	ldy #$00
 	
@@ -235,6 +241,17 @@ showBullets:
 		
 		iny
 		jmp .removeUnexistingBullets
+	
+	.removeBulletsFirstIndex:
+		ldx #$FE
+		stx PLAYER_BULLET_SPRITES
+		stx PLAYER_BULLET_SPRITES+$1
+		stx PLAYER_BULLET_SPRITES+$2
+		stx PLAYER_BULLET_SPRITES+$3
+		inx
+		inx
+		stx bullets
+		stx bullets+$1
 		
 	.rts:	
 		rts

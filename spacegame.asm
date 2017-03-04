@@ -59,6 +59,7 @@ score .rs 8
 SCORE_DIGITS = $08
 
 buttons .rs 1
+
 	
 	.bank 1
 	
@@ -66,6 +67,7 @@ buttons .rs 1
 	.include "spacegame/palette.asm"
 	.include "spacegame/backgroundGame.asm"
 	.include "spacegame/player.asm"
+	.include "spacegame/prng.asm"
 	
 	.org $FFFA
 	.dw NMI
@@ -206,6 +208,10 @@ enableSprites:
 	lda #%00011110
 	sta PPU_MASK
 
+setSeed:
+	ldx #$05
+	stx seed
+	stx seed+1
 	
 endReset:
 	jmp endReset
@@ -223,6 +229,9 @@ NMI:
 	sta PPU_OAM_ADDRESS
 	lda #$02
 	sta PPU_OAM_DMA
+	
+	jsr prng
+	sta $40
 	
 	jsr updatePlayerBullets
 	

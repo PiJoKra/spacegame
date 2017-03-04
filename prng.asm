@@ -13,19 +13,25 @@
 ;
 ; Execution time is an average of 125 cycles (excluding jsr and rts)
 
-seed: .res 2       ; initialize 16-bit seed to any value except 0
+seed .rs 2
+
+;notes by me, to get to know the algoritm better
+;executes one and two both 8 times.
+;If carry set after rol seed+1, eor #$2D, then go to two, otherwise go to two immediately
 
 prng:
+	
 	ldx #8     ; iteration count (generates 8 bits)
 	lda seed+0
-one:
-	asl        ; shift the register
-	rol seed+1
-	bcc two
-	eor #$2D   ; apply XOR feedback whenever a 1 bit is shifted out
-two:
-	dex
-	bne one
-	sta seed+0
-	cmp #0     ; reload flags
-	rts
+	
+	one:
+		asl A       ; shift the register
+		rol seed+1
+		bcc two
+		eor #$2D   ; apply XOR feedback whenever a 1 bit is shifted out
+	two:
+		dex
+		bne one
+		sta seed+0
+		cmp #0     ; reload flags
+		rts

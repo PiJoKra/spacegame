@@ -31,9 +31,6 @@
 ;NESASM uses hexadecimal and binary numbers, not decimal numbers. On some places however
 ;(TODO: check if this is correct) It seems that this is not the case for zero, which can also be written in de decimal format
 
-;(TODO) putting dot in front of label makes it local (as seen in symbol.c#106)
-;https://github.com/thentenaar/nesasm/blob/master/documentation/usage.txt
-
 
 	.inesprg 1 ;1 16kb prg bank
 	.ineschr 1 ;1 8kg chr bank
@@ -68,6 +65,7 @@ buttons .rs 1
 	.include "spacegame/backgroundGame.asm"
 	.include "spacegame/player.asm"
 	.include "spacegame/prng.asm"
+	.include "spacegame/enemies.asm"
 	
 	.org $FFFA
 	.dw NMI
@@ -213,6 +211,9 @@ setSeed:
 	stx seed
 	stx seed+1
 	
+initialiseEnemies:
+	jsr initialiseEnemyCounter
+	
 endReset:
 	jmp endReset
 	
@@ -230,8 +231,7 @@ NMI:
 	lda #$02
 	sta PPU_OAM_DMA
 	
-	jsr prng
-	sta $40
+	jsr spawnEnemyEveryXFrames
 	
 	jsr updatePlayerBullets
 	

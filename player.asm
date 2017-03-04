@@ -154,8 +154,6 @@ updatePlayerBullets:
 		bne .clearRedundantCells
 
 	.rts:
-		lda bulletLastIndex
-		sta $30
 		rts
 		
 	.destroyBullet:
@@ -193,6 +191,8 @@ playerShoot:
 		
 showBullets:
 
+	;Since only checking the first index is not possible due to underflow, I just check wether or not there should be bullet
+	;on the first index, and if so, just remove the first index
 	lda bulletCount
 	cmp #$00
 	beq .removeBulletsFirstIndex

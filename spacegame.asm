@@ -212,6 +212,7 @@ setSeed:
 	stx seed+1
 	
 initialiseEnemies:
+	jsr initialiseEnemySprite
 	jsr initialiseEnemyCounter
 	
 endReset:
@@ -232,6 +233,7 @@ NMI:
 	sta PPU_OAM_DMA
 	
 	jsr spawnEnemyEveryXFrames
+	jsr updateEnemy
 	
 	jsr updatePlayerBullets
 	

@@ -43,8 +43,8 @@ spawnEnemy:
 	
 updateEnemy:
 	lda enemy
-	;cmp #$00
-	;beq .noEnemy
+	cmp #$00
+	beq .noEnemy
 	clc
 	adc enemy+2
 	;bcc .destroyEnemy
@@ -83,6 +83,15 @@ showEnemy:
 	
 	
 	.dontShow:
+        ldx #$FE
+        stx ENEMY_SPRITE
+        stx ENEMY_SPRITE+3
+        stx ENEMY_SPRITE+4
+        stx ENEMY_SPRITE+7
+        stx ENEMY_SPRITE+8
+        stx ENEMY_SPRITE+11
+        stx ENEMY_SPRITE+12
+        stx ENEMY_SPRITE+15
 		rts
 
 enemySprite:

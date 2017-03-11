@@ -27,7 +27,7 @@
 ;All memory spaces are 8-bit. Sometimes a 16-bit integer is needed, and that is solved
 ;by allowing to write to the memory space two times. Since NESASM is little endian, the
 
-;lowest bit needs to be written first.
+;lowest bit needs to be written first. (TODO: Somehow does not apply to $2007 and $2006)
 ;NESASM uses hexadecimal and binary numbers, not decimal numbers. On some places however
 ;(TODO: check if this is correct) It seems that this is not the case for zero, which can also be written in de decimal format
 

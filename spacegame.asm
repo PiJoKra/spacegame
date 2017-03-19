@@ -258,6 +258,7 @@ gameStateMenu:
     
     jsr gameStartButtonShowHide
     jsr readInputMenu
+    jsr updateSeedRoller
     
     jmp endNMI
 

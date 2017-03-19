@@ -21,7 +21,7 @@ palette:
 	.db $1F, $30, $16, $00 ;Black, White, Red, Gray
 	.db $1F, $11, $21, $30 ;Black, Blue, Light blue, White
 	.db $1F, $30, $24, $1F ;Black, White, Pink, Black
-	.db $1F, $30, $2A, $1F ;Black, White, Green, Black
+	.db $1F, $1A, $2A, $30 ;Black, Dark green, Green, White
 
 	;Sprite colors
 	;First color is always used for transparancy and 

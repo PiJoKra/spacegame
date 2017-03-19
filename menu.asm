@@ -4,10 +4,18 @@ gameStartButtonShown .rs 1
 GAME_START_BUTTON_SHOWN = $00
 GAME_START_BUTTON_HIDDEN = $01
 gameOverCounter .rs 1
+seedRoller .rs 1
 
 menuInit:
     lda #GAME_START_BUTTON_SHOWN_COUNTER_MAX
     sta gameStartButtonShownCounter
+    lda #$01
+    sta seedRoller
+    rts
+    
+updateSeedRoller:
+    inc seedRoller
+    rts
 
 gameStartButtonShowHide:
     ldx gameStartButtonShownCounter
@@ -42,6 +50,9 @@ readInputMenu:
         jsr resetPlayerVariables
         
         .setSeed:
+            ldx seedRoller
+            cpx #$00
+            beq .seedCannotBeZero
             stx seed
             stx seed+1
             
@@ -56,6 +67,13 @@ readInputMenu:
             sta nameTableLoader
             
     rts
+    
+    .seedCannotBeZero:
+        inx ;So we change it to one
+        stx seedRoller
+        stx seed
+        stx seed+1
+        jmp .initialiseEnemies
     
 countDownGameOver:
     rts

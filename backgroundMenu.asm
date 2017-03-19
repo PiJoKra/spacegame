@@ -40,7 +40,7 @@ loadBackgroundMenu:
 
     ldx #$00
     .loopLoadAttributes:
-        lda attributes, x
+        lda attributesMenu, x
         sta PPU_DATA
         
         inx
@@ -72,8 +72,8 @@ attributesMenu:
     ;That the blocks have dimension of 16x16 means that 4 backgroundtiles have to
     ;use the same colorpalette
 
-    ;Rows 1 and 2 (HUD):
-    .db 0, 0, 0, 0, 0, 0, 0, 0
+    ;Rows 1 and 2:
+    .db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF
 
     ;Rows 3 and 4:
-    .db %00000000, %00000000, %00000000, %00000000, %00100000, %00000000, %00000000, %00000000
+    .db $FF, $FF, $FF, $FF, $FF, $FF, $FF, $FF

@@ -113,8 +113,8 @@ updatePlayerBullets:
 	
 	;Making sure the bullets are at the start of the stack, and all the empty spots
 	;are at the end
-	;AX AY 00 00 BX BY 00 00 CX CY
-	;AX AY BX BY CX CY 00 00 00 00
+	;from: AX AY 00 00 BX BY 00 00 CX CY
+	;to:   AX AY BX BY CX CY 00 00 00 00
 	.loopOverBullets:
 		lda bullets, x
 		

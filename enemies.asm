@@ -1,5 +1,6 @@
 spawnEnemyCounter .rs 1
 enemy .rs 3 ;max 10 enemies. Attributes: y x speed
+enemyCollisionBulletCondition .rs 1
 SPAWN_ENEMY_COUNTER = $60
 ENEMY_SPRITE = $230
 
@@ -49,6 +50,11 @@ updateEnemy:
 	adc enemy+2
 	;bcc .destroyEnemy
 	sta enemy
+    
+    jsr checkEnemyBulletCollision
+    cmp #$01
+    beq .destroyEnemy
+    
 	jmp showEnemy
 	
 	.noEnemy:
@@ -58,6 +64,8 @@ updateEnemy:
 		lda #$00
 		sta enemy
 		sta enemy+1
+        lda #$05
+        sta $40
 		rts
 	
 showEnemy:
@@ -93,6 +101,57 @@ showEnemy:
         stx ENEMY_SPRITE+12
         stx ENEMY_SPRITE+15
 		rts
+        
+checkEnemyBulletCollision:
+    ldx #$0
+    .loop:
+        ;if enemy.y > bullet.y + bullet.h --> bullet.y < enemy.y - bullet.h
+        ;if enemy.y < bullet.y - enemy.h --> bullet.y > enemy.y + enemy.h
+        ;if enemy.x > bullet.x + bullet.w --> bullet.x < enemy.x - bullet.w
+        ;if enemy.x < bullet.x - enemy.w --> bullet.x > enemy.x + enemy.w
+        ;   ---> no collision
+        
+        ;If no more bullets, there was no collision
+        ldy bullets, x
+        cpy #$00
+        beq .noCollision
+        
+        ;; ??????????????
+        ;Why does -10+18 work, but +8 nog...???
+        ;from: http://atariage.com/forums/topic/71120-6502-killer-hacks/page-3#entry1054049
+        tya
+        sbc enemy
+        sbc #$10
+        adc #$18
+        ;adc #PPU_OAM_SPRITE_SIZE
+        bcc .noCollision
+        
+        lda bullets+1, x
+        sbc enemy+1
+        sbc #$10
+        adc #$18
+        ;adc #PPU_OAM_SPRITE_SIZE
+        bcc .noCollision
+        
+        
+        ;lda enemy
+        ;sec
+        ;sbc PPU_OAM_SPRITE_SIZE
+        ;sta enemyCollisionBulletCondition
+        ;cpy enemyCollisionBulletCondition
+        
+        
+        ; tya
+        ; clc
+        ; adc enemy
+    
+    .collision:
+        lda #$01
+        rts
+    
+    .noCollision:
+        lda #$00
+        rts
 
 enemySprite:
 	.db $FE, $20, %00000000, $FE

@@ -48,29 +48,40 @@ updateEnemy:
 	beq .noEnemy
 	clc
 	adc enemy+2
-	;bcc .destroyEnemy
+	bcs .despawnEnemy
 	sta enemy
     
     jsr checkEnemyBulletCollision
     cmp #$01
-    beq .destroyEnemy
+    beq .defeatEnemy
+    
+    jmp showEnemy
     
     .noEnemy:
-	   jmp showEnemy
+	   jmp hideEnemy
        rts
 	
+    .defeatEnemy:
+        jsr updateScore
+        jmp .destroyEnemy
+    
+    .despawnEnemy:
+        ldx health
+        dex
+        stx health
+        jmp .destroyEnemy
+    
 	.destroyEnemy:
 		lda #$00
 		sta enemy
 		sta enemy+1
-        lda #$05
-        jsr updateScore
+        jsr hideEnemy
 		rts
 	
 showEnemy:
 	lda enemy
 	cmp #$00
-	beq .dontShow
+	beq hideEnemy
 	
 	sta ENEMY_SPRITE
 	sta ENEMY_SPRITE+4
@@ -89,17 +100,17 @@ showEnemy:
 	rts
 	
 	
-	.dontShow:
-        ldx #$FE
-        stx ENEMY_SPRITE
-        stx ENEMY_SPRITE+3
-        stx ENEMY_SPRITE+4
-        stx ENEMY_SPRITE+7
-        stx ENEMY_SPRITE+8
-        stx ENEMY_SPRITE+11
-        stx ENEMY_SPRITE+12
-        stx ENEMY_SPRITE+15
-		rts
+hideEnemy:
+    ldx #$FE
+    stx ENEMY_SPRITE
+    stx ENEMY_SPRITE+3
+    stx ENEMY_SPRITE+4
+    stx ENEMY_SPRITE+7
+    stx ENEMY_SPRITE+8
+    stx ENEMY_SPRITE+11
+    stx ENEMY_SPRITE+12
+    stx ENEMY_SPRITE+15
+	rts
         
 checkEnemyBulletCollision:
     ldx #$0

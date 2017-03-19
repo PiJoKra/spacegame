@@ -8,6 +8,9 @@ bulletCount .rs 1
 bulletLastIndex .rs 1
 bullets .rs 16
 
+health .rs 1
+MAX_HEALTH = $05
+
 PLAYER_MIN_X = $0A
 PLAYER_MIN_Y = $0A
 PLAYER_MAX_X = $E5
@@ -28,6 +31,9 @@ resetPlayerVariables:
 	lda #$80
 	sta playerX
 	sta playerY
+    
+    lda #MAX_HEALTH
+    sta health
 	
 loadPlayerSprite:
 	ldx #$00
@@ -255,7 +261,37 @@ showBullets:
 		
 	.rts:	
 		rts
-	
+        
+updateHealthHUD:
+    lda PPU_STATUS_REGISTER
+
+    lda #$20
+    sta PPU_ADDRESS_REGISTER
+    lda #$53
+    sta PPU_ADDRESS_REGISTER
+
+    ldx #$00
+    ldy #$00
+    clc
+	.loop:
+        lda #$18
+        sta PPU_DATA
+        
+        inx
+        cpx health
+        bne .loop
+    .loop2:
+        cpx #MAX_HEALTH
+        beq .rts
+        
+        lda #$00
+        sta PPU_DATA
+        
+        inx
+        jmp .loop2
+        
+    .rts:
+        rts
 
 playerSprite:
 	.db $00, $00, %00000000, $00

@@ -243,6 +243,7 @@ NMI:
 	
 	;jsr updateScore
 	jsr updateScoreHUD
+    jsr updateHealthHUD
 	
 	;Set PPU_SCROLL to 0000 as it gets reset every time PPU_ADDRESS_REGISTER is read
 	lda #$00

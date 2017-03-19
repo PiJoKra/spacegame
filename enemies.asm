@@ -55,10 +55,9 @@ updateEnemy:
     cmp #$01
     beq .destroyEnemy
     
-	jmp showEnemy
-	
-	.noEnemy:
-		rts
+    .noEnemy:
+	   jmp showEnemy
+       rts
 	
 	.destroyEnemy:
 		lda #$00
@@ -104,13 +103,7 @@ showEnemy:
         
 checkEnemyBulletCollision:
     ldx #$0
-    .loop:
-        ;if enemy.y > bullet.y + bullet.h --> bullet.y < enemy.y - bullet.h
-        ;if enemy.y < bullet.y - enemy.h --> bullet.y > enemy.y + enemy.h
-        ;if enemy.x > bullet.x + bullet.w --> bullet.x < enemy.x - bullet.w
-        ;if enemy.x < bullet.x - enemy.w --> bullet.x > enemy.x + enemy.w
-        ;   ---> no collision
-        
+    .loop:        
         ;If no more bullets, there was no collision
         ldy bullets, x
         cpy #$00
@@ -132,18 +125,6 @@ checkEnemyBulletCollision:
         adc #$18
         ;adc #PPU_OAM_SPRITE_SIZE
         bcc .noCollision
-        
-        
-        ;lda enemy
-        ;sec
-        ;sbc PPU_OAM_SPRITE_SIZE
-        ;sta enemyCollisionBulletCondition
-        ;cpy enemyCollisionBulletCondition
-        
-        
-        ; tya
-        ; clc
-        ; adc enemy
     
     .collision:
         lda #$01

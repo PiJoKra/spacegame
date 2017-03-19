@@ -52,6 +52,8 @@ readInputMenu:
         .changeGameState:
             lda #GAME_STATE_GAME
             sta gamestate
+            lda #$00
+            sta nameTableLoader
             
     rts
     

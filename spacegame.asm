@@ -262,7 +262,10 @@ gameStateMenu:
     jmp endNMI
 
 gameStateGame:
-
+    lda nameTableLoader
+    cmp #NAME_TABLE_LOADING_PARTS
+    bne .keepLoading
+    
 	jsr spawnEnemyEveryXFrames
 	jsr updateEnemy
 	
@@ -276,6 +279,10 @@ gameStateGame:
     jsr updateHealthHUD
     
     jmp endNMI
+    
+    .keepLoading:
+        jsr loadBackgroundGame
+        jmp endNMI
     
 gameStateOver:
 

@@ -22,7 +22,7 @@ loadBackgroundGame:
     
     jmp .loadBackgroundGameRest
     
-    .loadBackgroundGameFirstQuarter
+    .loadBackgroundGameFirstQuarter:
         lda #$20
         sta PPU_ADDRESS_REGISTER
         lda #$00
@@ -91,14 +91,14 @@ loadBackgroundGame:
         lda #$C0
         sta PPU_ADDRESS_REGISTER
     	ldx #$00
-    	loopLoadAttributes:
+    	.loopLoadAttributes:
     		lda attributes, x
     		sta PPU_DATA
     		
     		inx
     		cpx #$10
-    		bne loopLoadAttributes
-    .rts	
+    		bne .loopLoadAttributes
+    .rts:	
 	   rts
 
 backgroundGame:

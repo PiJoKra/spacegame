@@ -241,7 +241,7 @@ NMI:
 	jsr repositionPlayer
 	jsr showBullets
 	
-	jsr updateScore
+	;jsr updateScore
 	jsr updateScoreHUD
 	
 	;Set PPU_SCROLL to 0000 as it gets reset every time PPU_ADDRESS_REGISTER is read

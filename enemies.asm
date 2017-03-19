@@ -64,7 +64,7 @@ updateEnemy:
 		sta enemy
 		sta enemy+1
         lda #$05
-        sta $40
+        jsr updateScore
 		rts
 	
 showEnemy:

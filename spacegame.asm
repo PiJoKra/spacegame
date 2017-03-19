@@ -50,6 +50,13 @@
 	;to store the OAM, this will be done in this game too
 	
 gamestate .rs 1
+GAME_STATE_MENU = 1
+GAME_STATE_GAME = 2
+GAME_STATE_OVER = 3
+
+;Since nametables cannot be fully loaded in one frame, we have to do it over multiple frames
+nameTableLoader .rs 1
+NAME_TABLE_LOADING_PARTS = 4 ;load 64 tiles each frame
 
 ;Score will be a 8 digit number
 score .rs 8
@@ -63,6 +70,8 @@ buttons .rs 1
 	.org $E000
 	.include "spacegame/palette.asm"
 	.include "spacegame/backgroundGame.asm"
+    .include "spacegame/backgroundMenu.asm"
+    .include "spacegame/menu.asm"
 	.include "spacegame/player.asm"
 	.include "spacegame/prng.asm"
 	.include "spacegame/enemies.asm"
@@ -161,7 +170,7 @@ clearSpriteData:
 	bne clearSpriteData
 	
 	jsr waitVBlank
-	
+
 loadPalette:
 	lda PPU_STATUS_REGISTER
 	
@@ -181,12 +190,14 @@ loadPalette:
 		bne loopLoadPalette
 	
 		
-background:
-	jsr loadBackgroundGame	
-	
+menu:
+    lda #GAME_STATE_MENU
+    sta gamestate
+	;jsr loadBackgroundGame	
+	jsr loadBackgroundMenu
 	
 initialisePlayer:
-	jsr resetPlayerVariables
+	;jsr resetPlayerVariables
 	
 enableNMI:
 	;First bit enables NMI on every vertical blanking interval
@@ -206,14 +217,14 @@ enableSprites:
 	lda #%00011110
 	sta PPU_MASK
 
-setSeed:
-	ldx #$05
-	stx seed
-	stx seed+1
+;setSeed:
+	;ldx #$05
+	;stx seed
+	;stx seed+1
 	
-initialiseEnemies:
-	jsr initialiseEnemySprite
-	jsr initialiseEnemyCounter
+;initialiseEnemies:
+	;jsr initialiseEnemySprite
+	;jsr initialiseEnemyCounter
 	
 endReset:
 	jmp endReset
@@ -231,20 +242,47 @@ NMI:
 	sta PPU_OAM_ADDRESS
 	lda #$02
 	sta PPU_OAM_DMA
+    
+    lda gamestate
+    
+    cmp #GAME_STATE_MENU
+    beq gameStateMenu
+    
+    cmp #GAME_STATE_GAME
+    beq gameStateGame
+    
+    ;Otherwise go to game-over screen
+    beq gameStateOver
 	
+gameStateMenu:
+    
+    jsr gameStartButtonShowHide
+    jsr readInputMenu
+    
+    jmp endNMI
+
+gameStateGame:
+
 	jsr spawnEnemyEveryXFrames
 	jsr updateEnemy
 	
 	jsr updatePlayerBullets
 	
-	jsr readInput
+	jsr readInputPlayer
 	jsr repositionPlayer
 	jsr showBullets
 	
-	;jsr updateScore
 	jsr updateScoreHUD
     jsr updateHealthHUD
+    
+    jmp endNMI
+    
+gameStateOver:
+
+    jsr countDownGameOver
 	
+    
+endNMI:
 	;Set PPU_SCROLL to 0000 as it gets reset every time PPU_ADDRESS_REGISTER is read
 	lda #$00
 	sta PPU_SCROLL

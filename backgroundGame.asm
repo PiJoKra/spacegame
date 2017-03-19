@@ -1,51 +1,105 @@
 loadBackgroundGame:
 	lda PPU_STATUS_REGISTER
-	
-	lda #$20
-	sta PPU_ADDRESS_REGISTER
-	lda #$00
-	sta PPU_ADDRESS_REGISTER
+    
+    ldx nameTableLoader
+    cpx #$00
+    beq .loadBackgroundGameFirstQuarter
+    
+    beq .loadBackgroundGameRest
+    
+    ldy #$00
+    cpx #$01
+    beq .loadBackgroundGameSecondQuarter
+     
+    cpx #$02
+    beq .loadBackgroundGameThirdQuarter
+    
+    cpx #$03
+    beq .loadBackgroundGameForthQuarter
+    
+    cpx #NAME_TABLE_LOADING_PARTS
+    beq .done
+    
+    jmp .loadBackgroundGameRest
+    
+    .loadBackgroundGameFirstQuarter
+        lda #$20
+        sta PPU_ADDRESS_REGISTER
+        lda #$00
+        sta PPU_ADDRESS_REGISTER
+        
+    	ldx #$00
+    	.loopLoadBackgroundHUD:
+    		lda backgroundGame, x
+    		sta PPU_DATA
+    		inx
+    		cpx #$80
+    		bne .loopLoadBackgroundHUD
+        
+        lda #$00
+		.loadRestOfQuarterNameTable:
+            sta PPU_DATA
+            inx
+            cpx #$F0
+            bne .loadRestOfQuarterNameTable
+        
+        inc nameTableLoader
+        rts
+    
+    .loadBackgroundGameSecondQuarter:
+        lda #$20
+        sta PPU_ADDRESS_REGISTER
+        lda #$F0
+        sta PPU_ADDRESS_REGISTER
+        jmp .loadBackgroundGameRest
+        
+    .loadBackgroundGameThirdQuarter:
+        lda #$20
+        sta PPU_ADDRESS_REGISTER
+        lda #$F0
+        sta PPU_ADDRESS_REGISTER
+        jmp .loadBackgroundGameRest
+            
+    .loadBackgroundGameForthQuarter:
+        lda #$20
+        sta PPU_ADDRESS_REGISTER
+        lda #$F0
+        sta PPU_ADDRESS_REGISTER
+        jmp .loadBackgroundGameRest
 
-	ldx 0
-	loopLoadBackgroundHUD:
-		lda backgroundGame, x
-		sta PPU_DATA
-		inx
-		cpx #$80
-		bne loopLoadBackgroundHUD
-		
-	lda #$00
-	ldx #$1A
-	loopLoadBackgroundRest:
-		ldy #$20
-		loopLoadBackgroundRow:
-		
-			sta PPU_DATA
-			dey
-			cpy 0
-			bne loopLoadBackgroundRow
-		
-		dex
-		cpx 0
-		bne loopLoadBackgroundRest
-		
-	lda PPU_STATUS_REGISTER
-	
-	lda #$23
-	sta PPU_ADDRESS_REGISTER
-	lda #$C0
-	sta PPU_ADDRESS_REGISTER
-	
-	ldx 0
-	loopLoadAttributes:
-		lda attributes, x
-		sta PPU_DATA
-		
-		inx
-		cpx #$10
-		bne loopLoadAttributes
-		
-	rts
+    .loadBackgroundGameRest:
+        
+        .loop:
+		    lda #$00
+            sta PPU_DATA
+            
+            iny
+            cpy #$F0
+		    bne .loop
+            
+        inc nameTableLoader
+
+    .done:
+        ldx nameTableLoader
+        cpx #NAME_TABLE_LOADING_PARTS
+        beq .rts
+        
+        lda PPU_STATUS_REGISTER
+        
+        lda #$23
+        sta PPU_ADDRESS_REGISTER
+        lda #$C0
+        sta PPU_ADDRESS_REGISTER
+    	ldx #$00
+    	loopLoadAttributes:
+    		lda attributes, x
+    		sta PPU_DATA
+    		
+    		inx
+    		cpx #$10
+    		bne loopLoadAttributes
+    .rts	
+	   rts
 
 backgroundGame:
 

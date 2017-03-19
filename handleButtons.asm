@@ -24,62 +24,63 @@ readInput:
 		rol buttons
 		dex
 		bne loopReadInput
-		
-handleButtonUp:
-	lda buttons
-	and #BUTTON_UP
-	beq handleButtonRight
-	
-	lda playerY
-	sec
-	sbc playerSpeed
-	sta playerY
-	
-handleButtonRight:
-	lda buttons
-	and #BUTTON_RIGHT
-	beq handleButtonDown
-	
-	lda playerX
-	clc
-	adc playerSpeed
-	sta playerX
-	
-handleButtonDown:
-	lda buttons
-	and #BUTTON_DOWN
-	beq handleButtonLeft
-	
-	lda playerY
-	clc
-	adc playerSpeed
-	sta playerY
-	
-handleButtonLeft:
-	lda buttons
-	and #BUTTON_LEFT
-	beq handleButtonA
-	
-	lda playerX
-	sec
-	sbc playerSpeed
-	sta playerX
-	
-handleButtonA:
-	lda canShoot
-	beq handleButtonAShoot
-	dec canShoot
-	rts
-	
-	handleButtonAShoot:
-		lda buttons
-		and #BUTTON_A
-		beq returnFromHandleInput
-		
-		jsr playerShoot
-		
-		lda #CAN_SHOOT_COUNTER
-		sta canShoot
-		
-returnFromHandleInput:
-	rts
+    rts
+; 		
+; handleButtonUp:
+; 	lda buttons
+; 	and #BUTTON_UP
+; 	beq handleButtonRight
+; 	
+; 	lda playerY
+; 	sec
+; 	sbc playerSpeed
+; 	sta playerY
+; 	
+; handleButtonRight:
+; 	lda buttons
+; 	and #BUTTON_RIGHT
+; 	beq handleButtonDown
+; 	
+; 	lda playerX
+; 	clc
+; 	adc playerSpeed
+; 	sta playerX
+; 	
+; handleButtonDown:
+; 	lda buttons
+; 	and #BUTTON_DOWN
+; 	beq handleButtonLeft
+; 	
+; 	lda playerY
+; 	clc
+; 	adc playerSpeed
+; 	sta playerY
+; 	
+; handleButtonLeft:
+; 	lda buttons
+; 	and #BUTTON_LEFT
+; 	beq handleButtonA
+; 	
+; 	lda playerX
+; 	sec
+; 	sbc playerSpeed
+; 	sta playerX
+; 	
+; handleButtonA:
+; 	lda canShoot
+; 	beq handleButtonAShoot
+; 	dec canShoot
+; 	rts
+; 	
+; 	handleButtonAShoot:
+; 		lda buttons
+; 		and #BUTTON_A
+; 		beq returnFromHandleInput
+; 		
+; 		jsr playerShoot
+; 		
+; 		lda #CAN_SHOOT_COUNTER
+; 		sta canShoot
+; 		
+; returnFromHandleInput:
+; 	rts

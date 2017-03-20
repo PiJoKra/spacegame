@@ -128,7 +128,6 @@ checkEnemyBulletCollision:
         sbc #$10
         adc #$18
         ;adc #PPU_OAM_SPRITE_SIZE
-        ;bcc .noCollision
     	bcc .checkForNextBullet
 		
         lda bullets+1, x
@@ -136,7 +135,6 @@ checkEnemyBulletCollision:
         sbc #$10
         adc #$18
         ;adc #PPU_OAM_SPRITE_SIZE
-        ;bcc .noCollision
     	bcc .checkForNextBullet
 	
     .collision:

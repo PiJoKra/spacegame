@@ -47,8 +47,7 @@ readInputMenu:
     rts
     
 startGame:
-	lda #$0
-	sta score
+	jsr resetScore
     jsr loadBackgroundGame
     jsr resetPlayerVariables
     

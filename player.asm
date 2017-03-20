@@ -332,6 +332,9 @@ updateHealthHUD:
     sta PPU_ADDRESS_REGISTER
 
     ldx #$00
+	cpx health
+	beq .dead
+	
     ldy #$00
     clc
 	.loop:
@@ -350,6 +353,19 @@ updateHealthHUD:
         
         inx
         jmp .loop2
+		
+	.dead:
+		;display "DEAD"
+		lda #$44
+		sta PPU_DATA
+		lda #$45
+		sta PPU_DATA
+		lda #$41
+		sta PPU_DATA
+		lda #$44
+		sta PPU_DATA
+		lda #$00
+		sta PPU_DATA
         
     .rts:
         rts

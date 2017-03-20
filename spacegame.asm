@@ -256,6 +256,9 @@ gameStateGame:
 	jsr spawnEnemyEveryXFrames
 	jsr updateEnemy
 	
+	jsr updateScoreHUD
+	jsr updateHealthHUD
+	
 	jsr isPlayerAlive
 	cmp #$00
 	beq endGame
@@ -265,9 +268,6 @@ gameStateGame:
 	jsr readInputPlayer
 	jsr repositionPlayer
 	jsr showBullets
-	
-	jsr updateScoreHUD
-    jsr updateHealthHUD
     
     jmp endNMI
     

@@ -1,3 +1,15 @@
+resetScore:
+	ldx #$00
+	dex
+	
+	lda #$00
+	.forEachDigit:
+		sta score, x
+		inx
+		cpx #SCORE_DIGITS
+		bne .forEachDigit
+	rts
+
 updateScore:
 	ldx #SCORE_DIGITS
 	dex ;counting starts at 0, so we need to decrease by one

@@ -128,15 +128,17 @@ checkEnemyBulletCollision:
         sbc #$10
         adc #$18
         ;adc #PPU_OAM_SPRITE_SIZE
-        bcc .noCollision
-        
+        ;bcc .noCollision
+    	bcc .checkForNextBullet
+		
         lda bullets+1, x
         sbc enemy+1
         sbc #$10
         adc #$18
         ;adc #PPU_OAM_SPRITE_SIZE
-        bcc .noCollision
-    
+        ;bcc .noCollision
+    	bcc .checkForNextBullet
+	
     .collision:
         lda #$01
         rts
@@ -144,6 +146,13 @@ checkEnemyBulletCollision:
     .noCollision:
         lda #$00
         rts
+		
+	.checkForNextBullet:
+		inx
+		inx
+		cpx #$10
+		bne .loop
+		jmp .noCollision
 
 enemySprite:
 	.db $FE, $20, %00000000, $FE

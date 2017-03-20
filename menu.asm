@@ -73,7 +73,6 @@ startGame:
     
     .seedCannotBeZero:
         inx ;So we change it to one
-        stx seedRoller
         stx seed
         stx seed+1
         jmp .initialiseEnemies

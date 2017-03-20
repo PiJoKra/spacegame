@@ -79,15 +79,23 @@ startGame:
         jmp .initialiseEnemies
     
 countDownGameOver:
-
+	jsr updateSeedRoller
+	
 	ldx gameOverCounter
-	dex
 	cpx #$00
-	beq .restart
+	beq .waitForInput
+	dex
 	stx gameOverCounter
 
     rts
 	
+	.waitForInput:
+		jsr readInput
+		lda buttons
+		and #BUTTON_A
+		bne .restart
+		rts
+		
 	.restart:
 		jsr startGame
 		rts

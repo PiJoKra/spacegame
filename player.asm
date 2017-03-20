@@ -353,6 +353,19 @@ updateHealthHUD:
         
     .rts:
         rts
+		
+isPlayerAlive:
+	lda health
+	cmp #$00
+	beq .no
+	
+	lda #$01
+	rts
+	
+	.no:
+		lda #$00
+		rts
+	
 
 playerSprite:
 	.db $00, $00, %00000000, $00

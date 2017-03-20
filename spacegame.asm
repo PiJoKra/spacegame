@@ -193,11 +193,7 @@ loadPalette:
 menu:
     lda #GAME_STATE_MENU
     sta gamestate
-	;jsr loadBackgroundGame	
 	jsr loadBackgroundMenu
-	
-initialisePlayer:
-	;jsr resetPlayerVariables
 	
 enableNMI:
 	;First bit enables NMI on every vertical blanking interval
@@ -216,15 +212,6 @@ enableSprites:
 	;http://wiki.nesdev.com/w/index.php/PPU_registers#Mask_.28.242001.29_.3E_write
 	lda #%00011110
 	sta PPU_MASK
-
-;setSeed:
-	;ldx #$05
-	;stx seed
-	;stx seed+1
-	
-;initialiseEnemies:
-	;jsr initialiseEnemySprite
-	;jsr initialiseEnemyCounter
 	
 endReset:
 	jmp endReset
@@ -252,10 +239,9 @@ NMI:
     beq gameStateGame
     
     ;Otherwise go to game-over screen
-    beq gameStateOver
+    jmp gameStateOver
 	
 gameStateMenu:
-    
     jsr gameStartButtonShowHide
     jsr readInputMenu
     jsr updateSeedRoller
@@ -269,6 +255,10 @@ gameStateGame:
     
 	jsr spawnEnemyEveryXFrames
 	jsr updateEnemy
+	
+	jsr isPlayerAlive
+	cmp #$00
+	beq endGame
 	
 	jsr updatePlayerBullets
 	
@@ -286,7 +276,7 @@ gameStateGame:
         jmp endNMI
     
 gameStateOver:
-
+	dec $66
     jsr countDownGameOver
 	
     
@@ -298,6 +288,15 @@ endNMI:
 	
 	;End execution of NMI
 	rti
+	
+endGame:
+	lda #GAME_STATE_OVER
+	sta gamestate
+	
+	lda #GAME_OVER_COUNTER_MAX
+	sta gameOverCounter
+	
+	jmp gameStateOver
 
 ;=================================================;
 	

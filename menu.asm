@@ -4,6 +4,7 @@ gameStartButtonShown .rs 1
 GAME_START_BUTTON_SHOWN = $00
 GAME_START_BUTTON_HIDDEN = $01
 gameOverCounter .rs 1
+GAME_OVER_COUNTER_MAX = $50
 seedRoller .rs 1
 
 menuInit:
@@ -41,32 +42,34 @@ readInputMenu:
     
     lda buttons
     and #BUTTON_A
-    bne .startGame
+    bne startGame
     
     rts
     
-    .startGame:
-        jsr loadBackgroundGame
-        jsr resetPlayerVariables
+startGame:
+	lda #$0
+	sta score
+    jsr loadBackgroundGame
+    jsr resetPlayerVariables
+    
+    .setSeed:
+        ldx seedRoller
+        cpx #$00
+        beq .seedCannotBeZero
+        stx seed
+        stx seed+1
         
-        .setSeed:
-            ldx seedRoller
-            cpx #$00
-            beq .seedCannotBeZero
-            stx seed
-            stx seed+1
-            
-        .initialiseEnemies:
-            jsr initialiseEnemySprite
-            jsr initialiseEnemyCounter
-    
-        .changeGameState:
-            lda #GAME_STATE_GAME
-            sta gamestate
-            lda #$00
-            sta nameTableLoader
-            
-    rts
+    .initialiseEnemies:
+        jsr initialiseEnemySprite
+        jsr initialiseEnemyCounter
+
+    .changeGameState:
+        lda #GAME_STATE_GAME
+        sta gamestate
+        lda #$00
+        sta nameTableLoader
+        
+	rts
     
     .seedCannotBeZero:
         inx ;So we change it to one
@@ -76,4 +79,15 @@ readInputMenu:
         jmp .initialiseEnemies
     
 countDownGameOver:
+
+	ldx gameOverCounter
+	dex
+	cpx #$00
+	beq .restart
+	stx gameOverCounter
+
     rts
+	
+	.restart:
+		jsr startGame
+		rts

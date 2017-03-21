@@ -1,7 +1,5 @@
 resetScore:
 	ldx #$00
-	dex
-	
 	lda #$00
 	.forEachDigit:
 		sta score, x
@@ -15,8 +13,8 @@ updateScore:
 	dex ;counting starts at 0, so we need to decrease by one
 	inc score, x
 	
-	sec
-	handleScoreDigits:
+	sec ;.handleScoreDigits will never underflow, so carry will stay set
+	.handleScoreDigits:
 		cpx #$FF
 		beq .rts
 		
@@ -29,7 +27,7 @@ updateScore:
 		dex
 		inc score, x
 		
-		jmp handleScoreDigits
+		jmp .handleScoreDigits
 		
 	.rts:
 		RTS
@@ -44,13 +42,13 @@ updateScoreHUD:
 	
 	ldx #$00
 	clc
-	loopUpdateScoreHUD:
+	.loopUpdateScoreHUD:
 		lda score, x
 		adc #$30
 		sta PPU_DATA
 		
 		inx
 		cpx #SCORE_DIGITS
-		bne loopUpdateScoreHUD
+		bne .loopUpdateScoreHUD
 		
 	rts

@@ -34,13 +34,28 @@ spawnEnemy:
 	lda #$1
 	sta enemy+0
 	jsr prng
+	cmp #PLAYER_MIN_X
+	bcc .restrictEnemyMinX
+	cmp #PLAYER_MAX_X
+	bcs .restrictEnemyMaxX
 	sta enemy+1
 	
-	lda #$3
-	sta enemy+2
+	jmp .finishSpawn
 	
-	
-	rts
+	.restrictEnemyMinX:
+		lda #PLAYER_MIN_X
+		sta enemy+1
+		jmp .finishSpawn
+		
+	.restrictEnemyMaxX:
+		lda #PLAYER_MAX_X
+		sta enemy+1
+		jmp .finishSpawn
+		
+	.finishSpawn:
+		lda #$3
+		sta enemy+2
+		rts
 	
 updateEnemy:
 	lda enemy

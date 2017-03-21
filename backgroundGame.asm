@@ -5,8 +5,6 @@ loadBackgroundGame:
     cpx #$00
     beq .loadBackgroundGameFirstQuarter
     
-    beq .loadBackgroundGameRest
-    
     ldy #$00
     cpx #$01
     beq .loadBackgroundGameSecondQuarter
@@ -54,16 +52,16 @@ loadBackgroundGame:
         jmp .loadBackgroundGameRest
         
     .loadBackgroundGameThirdQuarter:
-        lda #$20
+        lda #$21
         sta PPU_ADDRESS_REGISTER
-        lda #$F0
+        lda #$E0
         sta PPU_ADDRESS_REGISTER
         jmp .loadBackgroundGameRest
             
     .loadBackgroundGameForthQuarter:
-        lda #$20
+        lda #$22
         sta PPU_ADDRESS_REGISTER
-        lda #$F0
+        lda #$D0
         sta PPU_ADDRESS_REGISTER
         jmp .loadBackgroundGameRest
 

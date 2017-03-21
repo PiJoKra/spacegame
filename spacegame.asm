@@ -64,6 +64,9 @@ SCORE_DIGITS = $08
 
 buttons .rs 1
 
+backgroundAddressLow .rs 1
+backgroundAddressHigh .rs 1
+
 	
 	.bank 1
 	
@@ -71,6 +74,7 @@ buttons .rs 1
 	.include "spacegame/palette.asm"
 	.include "spacegame/backgroundGame.asm"
     .include "spacegame/backgroundMenu.asm"
+	.include "spacegame/backgroundOver.asm"
     .include "spacegame/menu.asm"
 	.include "spacegame/player.asm"
 	.include "spacegame/prng.asm"
@@ -276,8 +280,19 @@ gameStateGame:
         jmp endNMI
     
 gameStateOver:
-	dec $66
+	lda nameTableLoader
+	cmp #$04
+	bne .keepLoading
+	
     jsr countDownGameOver
+	
+	jmp endNMI
+	
+	.keepLoading:
+		lda nameTableLoader
+		sta $64
+		jsr loadBackgroundOver
+		jmp endNMI
 	
     
 endNMI:
@@ -293,8 +308,19 @@ endGame:
 	lda #GAME_STATE_OVER
 	sta gamestate
 	
+	lda #$FE
+	sta PLAYER_SPRITE+$00
+	sta PLAYER_SPRITE+$04
+	sta PLAYER_SPRITE+$08
+	sta PLAYER_SPRITE+$0C
+	
+	lda #$00
+	sta nameTableLoader
+	
 	lda #GAME_OVER_COUNTER_MAX
 	sta gameOverCounter
+	
+	;jsr drawYouLost
 	
 	jmp gameStateOver
 

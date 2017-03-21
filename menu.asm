@@ -50,6 +50,7 @@ startGame:
 	jsr resetScore
     jsr loadBackgroundGame
     jsr resetPlayerVariables
+	jsr clearYouLostText
     
     .setSeed:
         ldx seedRoller
@@ -75,7 +76,56 @@ startGame:
         stx seed
         stx seed+1
         jmp .initialiseEnemies
-    
+
+drawYouLost:
+	;Draw "YOU LOST~!"
+	lda PPU_STATUS_REGISTER
+	lda #$21
+	sta PPU_ADDRESS_REGISTER
+	lda #$0C
+	sta PPU_ADDRESS_REGISTER
+	
+	ldx #$00
+	.loop:
+		lda youLostString, x
+		sta PPU_DATA
+		
+		inx
+		cpx #$0A
+		bne .loop
+		
+	txa
+	clc
+	adc #$24
+	tax
+	.loop2:
+		lda pressAKey, x
+		sta PPU_DATA
+		
+		inx
+		cpx #$10
+		bne .loop2
+		
+	rts
+	
+clearYouLostText:
+	lda PPU_STATUS_REGISTER
+	lda #$21
+	sta PPU_ADDRESS_REGISTER
+	lda #$0C
+	sta PPU_ADDRESS_REGISTER
+
+	ldx #$00
+	.loop:
+		lda #$00
+		sta PPU_DATA
+		
+		inx
+		cpx #$0A
+		bne .loop
+	rts
+		
+
 countDownGameOver:
 	jsr updateSeedRoller
 	
@@ -97,3 +147,9 @@ countDownGameOver:
 	.restart:
 		jsr startGame
 		rts
+		
+youLostString:
+	.db "YOU LOST~!"
+	
+pressAKey:
+	.db "PRESS A TO START"

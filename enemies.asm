@@ -168,7 +168,7 @@ checkEnemyBulletCollision:
 		jmp .noCollision
 
 enemySprite:
-	.db $FE, $20, %00000000, $FE
-	.db $FE, $21, %00000000, $FE
-	.db $FE, $30, %00000000, $FE
-	.db $FE, $31, %00000000, $FE
+	.db $FE, $20, %00100010, $FE
+	.db $FE, $21, %00100010, $FE
+	.db $FE, $30, %00100010, $FE
+	.db $FE, $31, %00100010, $FE

@@ -281,7 +281,7 @@ showBullets:
 		lda #$02
 		sta PLAYER_BULLET_SPRITES+$1, y
 		
-		lda #$01
+		lda #%00100001
 		sta PLAYER_BULLET_SPRITES+$2, y
 		
 		lda bullets+$1, x
@@ -384,7 +384,7 @@ isPlayerAlive:
 	
 
 playerSprite:
-	.db $00, $00, %00000000, $00
-	.db $00, $00, %01000000, $00
-	.db $00, $10, %00000000, $00
-	.db $00, $10, %01000000, $00
+	.db $00, $00, %00100000, $00
+	.db $00, $00, %01100000, $00
+	.db $00, $10, %00100000, $00
+	.db $00, $10, %01100000, $00

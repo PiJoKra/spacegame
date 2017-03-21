@@ -6,6 +6,8 @@ GAME_START_BUTTON_HIDDEN = $01
 gameOverCounter .rs 1
 GAME_OVER_COUNTER_MAX = $50
 seedRoller .rs 1
+toggleButtonRoller .rs 1
+TOGGLE_BUTTON_ROLLER_MAX = $20
 
 menuInit:
     lda #GAME_START_BUTTON_SHOWN_COUNTER_MAX
@@ -50,7 +52,9 @@ startGame:
 	jsr resetScore
     jsr loadBackgroundGame
     jsr resetPlayerVariables
-	jsr clearYouLostText
+	
+	lda #$FE
+	sta $0240
     
     .setSeed:
         ldx seedRoller
@@ -77,65 +81,42 @@ startGame:
         stx seed+1
         jmp .initialiseEnemies
 
-drawYouLost:
-	;Draw "YOU LOST~!"
-	lda PPU_STATUS_REGISTER
-	lda #$21
-	sta PPU_ADDRESS_REGISTER
-	lda #$0C
-	sta PPU_ADDRESS_REGISTER
-	
-	ldx #$00
-	.loop:
-		lda youLostString, x
-		sta PPU_DATA
-		
-		inx
-		cpx #$0A
-		bne .loop
-		
-	txa
-	clc
-	adc #$24
-	tax
-	.loop2:
-		lda pressAKey, x
-		sta PPU_DATA
-		
-		inx
-		cpx #$10
-		bne .loop2
-		
-	rts
-	
-clearYouLostText:
-	lda PPU_STATUS_REGISTER
-	lda #$21
-	sta PPU_ADDRESS_REGISTER
-	lda #$0C
-	sta PPU_ADDRESS_REGISTER
-
-	ldx #$00
-	.loop:
-		lda #$00
-		sta PPU_DATA
-		
-		inx
-		cpx #$0A
-		bne .loop
-	rts
-		
-
 countDownGameOver:
 	jsr updateSeedRoller
 	
-	ldx gameOverCounter
+	ldx toggleButtonRoller
 	cpx #$00
-	beq .waitForInput
+	beq .toggleButton
 	dex
-	stx gameOverCounter
+	stx toggleButtonRoller
+	
+	.checkGameOverCounter:
+		ldx gameOverCounter
+		cpx #$00
+		beq .waitForInput
+		dex
+		stx gameOverCounter
 
     rts
+	
+	.toggleButton:
+		lda #TOGGLE_BUTTON_ROLLER_MAX
+		sta toggleButtonRoller
+		
+		lda $0240
+		cmp #$FE
+		beq .showButton
+		lda #$FE
+		sta $0240
+		sta $0243
+		jmp .checkGameOverCounter
+		
+	.showButton:
+		lda #$95
+		sta $0240
+		lda #$55
+		sta $0243
+		jmp .checkGameOverCounter
 	
 	.waitForInput:
 		jsr readInput
@@ -147,9 +128,3 @@ countDownGameOver:
 	.restart:
 		jsr startGame
 		rts
-		
-youLostString:
-	.db "YOU LOST~!"
-	
-pressAKey:
-	.db "PRESS A TO START"

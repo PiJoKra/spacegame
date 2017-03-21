@@ -98,6 +98,16 @@ loadBackgroundOver:
 		;no rts here, as now we execute the .done
 	
     .done:
+	
+		;lda #$95
+		;sta $0240
+		lda #$01
+		sta $0241
+		lda #%00000011
+		sta $0242
+		;lda #$55
+		;sta $0243
+	
         lda PPU_STATUS_REGISTER
         
         lda #$23

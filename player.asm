@@ -281,7 +281,7 @@ showBullets:
 		lda #$02
 		sta PLAYER_BULLET_SPRITES+$1, y
 		
-		lda #$0
+		lda #$01
 		sta PLAYER_BULLET_SPRITES+$2, y
 		
 		lda bullets+$1, x

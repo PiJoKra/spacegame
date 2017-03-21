@@ -94,13 +94,10 @@ loadBackgroundOver:
 		    bne .loop3
             
         inc nameTableLoader
-		rts
+		
+		;no rts here, as now we execute the .done
 	
     .done:
-        ldx nameTableLoader
-        cpx #NAME_TABLE_LOADING_PARTS
-        beq .rts
-        
         lda PPU_STATUS_REGISTER
         
         lda #$23
@@ -109,11 +106,11 @@ loadBackgroundOver:
         sta PPU_ADDRESS_REGISTER
     	ldx #$00
     	.loopLoadAttributes:
-    		lda attributes, x
+    		lda attributesOver, x
     		sta PPU_DATA
     		
     		inx
-    		cpx #$10
+    		cpx #$40
     		bne .loopLoadAttributes
 	.rts:	
 		rts
@@ -166,8 +163,11 @@ attributesOver:
 	;That the blocks have dimension of 16x16 means that 4 backgroundtiles have to
 	;use the same colorpalette
 	
-	;Rows 1 and 2 (HUD):
 	.db 0, 0, 0, 0, 0, 0, 0, 0
-	
-	;Rows 3 and 4:
-	.db %00000000, %00000000, %00000000, %00000000, %00100000, %00000000, %00000000, %00000000
+	.db 0, 0, 0, 0, 0, 0, 0, 0
+	.db 0, 0, 0, 0, 0, 0, 0, 0
+	.db 0, 0, 0, 0, 0, 0, 0, 0
+	.db 0, 0, %10100000, %00100000, 0, 0, 0, 0
+	.db 0, 0, 0, 0, 0, 0, 0, 0
+	.db 0, 0, 0, 0, 0, 0, 0, 0
+	.db 0, 0, 0, 0, 0, 0, 0, 0

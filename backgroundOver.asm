@@ -21,9 +21,6 @@ loadBackgroundOver:
     cpx #$03
     beq .loadBackgroundGameForthQuarter
     
-    cpx #NAME_TABLE_LOADING_PARTS
-    beq .done
-    
     ;jmp .loadBackgroundGameRest
     
     .loadBackgroundGameFirstQuarter:
@@ -51,6 +48,9 @@ loadBackgroundOver:
         sta PPU_ADDRESS_REGISTER
 		
 		.loop1:
+			cpy #$B3
+			beq .drawScore
+			
 		    lda backgroundOverPart2, y
             sta PPU_DATA
             
@@ -60,6 +60,19 @@ loadBackgroundOver:
             
         inc nameTableLoader
 		rts
+			
+		.drawScore:
+			ldx #$00
+			clc
+			.drawDigits:
+				lda score, x
+				adc #$30
+				sta PPU_DATA
+				inx
+				iny
+				cpx #SCORE_DIGITS
+				bne .drawDigits
+			jmp .loop1
         
     .loadBackgroundGameThirdQuarter:
         lda #$22
